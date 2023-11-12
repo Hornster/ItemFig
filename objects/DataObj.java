@@ -1,9 +1,9 @@
 package objects;
 
-import serialization.ISerializedObj;
+import serialization.IConfigObj;
 
 import java.util.LinkedList;
 
 public class DataObj {
-    public LinkedList<ISerializedObj> objects;
+    public LinkedList<IConfigObj> objects;
 }

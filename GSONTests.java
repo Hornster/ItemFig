@@ -1,7 +1,6 @@
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import objects.*;
-import serialization.ISerializedObj;
+import serialization.IConfigObj;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -18,7 +17,7 @@ public class GSONTests {
 
         var dataObj = new DataObj();
 
-        var list = new LinkedList<ISerializedObj> ();
+        var list = new LinkedList<IConfigObj> ();
         list.add(objA);
         list.add(objB);
         list.add(objC);

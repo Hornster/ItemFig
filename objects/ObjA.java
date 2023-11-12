@@ -1,8 +1,10 @@
 package objects;
 
-import serialization.ISerializedObj;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import serialization.IConfigObj;
 
-public class ObjA implements ISerializedObj {
+public class ObjA implements IConfigObj {
     public Float paramA1;
     public Float paramA2;
 
@@ -19,5 +21,20 @@ public class ObjA implements ISerializedObj {
         if(paramA2 == null){
             paramA2 = DefaultVals.OBJA_PARAMA2;
         }
+    }
+
+    @Override
+    public IConfigObj DeserializeConfigObj(Gson gson, JsonElement element) {
+        return null;
+    }
+
+    @Override
+    public String SerializeConfigObj(Gson gson) {
+        return null;
+    }
+
+    @Override
+    public String getConfigObjId() {
+        return null;
     }
 }

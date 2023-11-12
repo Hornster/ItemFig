@@ -1,8 +1,8 @@
 package objects;
 
-import serialization.ISerializedObj;
+import serialization.IConfigObj;
 
-public class ObjC extends ObjCC implements ISerializedObj {
+public class ObjC extends ObjCC implements IConfigObj {
     public Integer paramC;
 
     public ObjC(int paramC, float paramCC1, String paramCC2){

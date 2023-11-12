@@ -1,8 +1,8 @@
 package objects;
 
-import serialization.ISerializedObj;
+import serialization.IConfigObj;
 
-public class ObjB implements ISerializedObj {
+public class ObjB implements IConfigObj {
     public Float paramB1;
     public String paramB2;
 

@@ -3,6 +3,7 @@ package serialization;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,10 +17,11 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class SerializationManager {
+    private static final String _registeredObjectsFieldName = "registeredObjects";
     /**Stores all objects that shall be de- and serialized.
      * The key is preferably the ID used in mod for given item, but can be something else as
      * long as it is unique, obviously..*/
-    private static Map<String, ISerializedObj> _registeredObjects = new HashMap<>();
+    private static Map<String, IConfigObj> _registeredObjects = new HashMap<>();
     private static final String _jsonPath = "config" + File.pathSeparator;
     private static String _jsonFileName;
     private static final String _jsonExtension = ".json";
@@ -31,17 +33,21 @@ public class SerializationManager {
      * the config whole.*/
     private static boolean _jsonDeserializationError = false;
     /**Force saving of the config no matter if any deserialization errors occurred.*/
-    private static boolean _forceConfigSave = false;
-    private static boolean _recreateConfig = false;
+    public static boolean _forceConfigSave = false;
+    /**Update the config with default values and new items if any were added.
+     * Will not work if deserialization errors occurred.*/
+    public static boolean _updateConfigSave = true;
+    /**Wipe current config clean and recreate new one from default values.*/
+    public static boolean _recreateConfig = false;
 
     /**Registers a data object for serialization.*/
-    public static void registerObject(ISerializedObj object){
-        _registeredObjects.put(object.getId(), object);
+    public static void registerObject(IConfigObj object){
+        _registeredObjects.put(object.getConfigObjId(), object);
     }
     /**Registers multiple data objects for serialization.*/
-    public static void registerObjects(List<ISerializedObj> objects){
+    public static void registerObjects(List<IConfigObj> objects){
         for(var obj : objects){
-            _registeredObjects.put(obj.getId(), obj);
+            _registeredObjects.put(obj.getConfigObjId(), obj);
         }
     }
     public static void registerSaveErrorHandler(Consumer<String> handler){
@@ -99,11 +105,13 @@ public class SerializationManager {
                 continue;
             }
 
-            if(_registeredObjects.containsKey(key)){
+            if(!_registeredObjects.containsKey(key)){
                 reportDeserializationWarning("Element with key " + key + " does not have a registered data object! Skipping.");
+                continue;
             }
             var registeredObject = _registeredObjects.get(key);
-            registeredObject.Deserialize(gson, jsonElement);
+            var deserializedConfigObj = registeredObject.DeserializeConfigObj(gson, jsonElement);
+            _registeredObjects.replace(key, deserializedConfigObj);
         }
     }
     private static void chkDefaultValues(){
@@ -112,6 +120,7 @@ public class SerializationManager {
             registeredObj.ChkDefaultValues();;
         }
     }
+    /**Recreates the config file using provided defaults.*/
     private static void recreateConfig(Gson gson){
         chkDefaultValues();
         var path = Paths.get(_jsonPath, _jsonFileName);
@@ -130,7 +139,7 @@ public class SerializationManager {
     public static void readConfig(){
         chkIfExtensionProvided();
         _jsonDeserializationError = false;
-        var gsonObj = new GsonBuilder().setPrettyPrinting().create();
+        var gsonObj = getGson();
 
         if(_recreateConfig){
             recreateConfig(gsonObj);
@@ -152,13 +161,18 @@ public class SerializationManager {
         chkDefaultValues();
 
 
-        if(_forceConfigSave){
+        if(_forceConfigSave
+            || (_updateConfigSave && ! _jsonDeserializationError)){
             saveConfig();
         }
     }
     /**Get the config for provided ID. Should be called after saveConfig method.
-     * Returned object can be cast to whatever type it was upon being registered.*/
-    public static ISerializedObj getItemConfig(String itemId){
+     * Returned object can be cast to whatever type it was upon being registered.
+     *
+     * @param itemId The ID unique of the config object to retrieve.*
+     * @return Object described by provided itemId or null if none present./
+
+    public static IConfigObj getItemConfig(String itemId){
         var object = _registeredObjects.get(itemId);
         return object;
     }
@@ -189,9 +203,25 @@ public class SerializationManager {
             }
         }
     }
+    private static Gson getGson(){
+        return new GsonBuilder().setPrettyPrinting().create();
+    }
     private static void saveConfigPerform() throws IOException {
-        var gson = new Gson();
-        var jsonData = gson.toJson(_registeredObjects);
+        var gson = getGson();
+
+        var rootJsonObj = new JsonObject();
+        var configMapElement = gson.toJsonTree(new HashMap<String, IConfigObj>());
+        var configMapObj = configMapElement.getAsJsonObject().asMap();
+
+        _registeredObjects.forEach((key, configObj) -> {
+            var serializedObj = gson.toJsonTree(configObj);
+            configMapObj.put(key, serializedObj);
+        });
+
+        var modifiedConfigMapJsonElement = gson.toJsonTree(configMapObj);
+        rootJsonObj.add(_registeredObjectsFieldName, modifiedConfigMapJsonElement);
+
+        var jsonData = gson.toJson(rootJsonObj);
 
         var fileWriter = new FileWriter(_jsonFileName);
         fileWriter.write(jsonData);
