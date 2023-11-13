@@ -1,6 +1,7 @@
 import com.google.gson.Gson;
 import objects.*;
 import serialization.IConfigObj;
+import serialization.SerializationManager;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -11,31 +12,29 @@ public class GSONTests {
     private static String _jsonName = "testJson.json";
 
     public static void writeData(){
-        var objA = new ObjA(NewVals.OBJA_PARAMA1, NewVals.OBJA_PARAMA2);
-        var objB = new ObjB(NewVals.OBJB_PARAMB1, NewVals.OBJB_PARAMB2);
-        var objC = new ObjC(NewVals.OBJC_PARAMC1, NewVals.OBJCC_PARAMC1, NewVals.OBJCC_PARAMC2);
+        var objA = new ObjA("ObjA", NewVals.OBJA_PARAMA1, NewVals.OBJA_PARAMA2);
+        var objA2 = new ObjA("ObjA2", NewVals.OBJA_PARAMA1, NewVals.OBJA_PARAMA2);
+        var objB = new ObjB("ObjB", NewVals.OBJB_PARAMB1, NewVals.OBJB_PARAMB2);
+        var objC = new ObjC("ObjC", NewVals.OBJC_PARAMC1, NewVals.OBJCC_PARAMC1, NewVals.OBJCC_PARAMC2);
 
         var dataObj = new DataObj();
 
         var list = new LinkedList<IConfigObj> ();
         list.add(objA);
+        list.add(objA2);
         list.add(objB);
         list.add(objC);
 
         dataObj.objects = list;
 
-        Gson gson;
-        gson = new Gson();
-        var jsonData = gson.toJson(dataObj);
+        var testReg = new SerializationManager();
 
-        try{
-            var fileWriter = new FileWriter(_jsonName);
-            fileWriter.write(jsonData);
-            fileWriter.close();
-        }
-        catch(IOException ioe){
-            var eh = ioe;
-        }
+
+        testReg.registerObjects(list);
+        testReg.readConfig();
+
+        var obj = testReg.getItemConfigAutoCast("ObjA");
+
     }
     public static void readData(){
         String readData = "";

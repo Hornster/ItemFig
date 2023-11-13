@@ -2,13 +2,19 @@ package objects;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import serialization.ConfigObj;
 import serialization.IConfigObj;
 
-public class ObjA implements IConfigObj {
+public class ObjA extends ConfigObj {
     public Float paramA1;
     public Float paramA2;
+    public ObjA(String id){
+        super(ObjA.class, id);
 
-    public ObjA(float paramA1, float paramA2){
+    }
+    public ObjA(String id, float paramA1, float paramA2){
+        super(ObjA.class, id);
+
         this.paramA1 = paramA1;
         this.paramA2 = paramA2;
     }
@@ -23,18 +29,4 @@ public class ObjA implements IConfigObj {
         }
     }
 
-    @Override
-    public IConfigObj DeserializeConfigObj(Gson gson, JsonElement element) {
-        return null;
-    }
-
-    @Override
-    public String SerializeConfigObj(Gson gson) {
-        return null;
-    }
-
-    @Override
-    public String getConfigObjId() {
-        return null;
-    }
 }
