@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 
 public class ObjC extends ObjCC implements IConfigObj {
     public String id;
-    private Type thisType = ObjC.class;
+    private final Type thisType = ObjC.class;
     public Integer paramC;
 
     public ObjC(String id, int paramC, float paramCC1, String paramCC2){
@@ -49,5 +49,24 @@ public class ObjC extends ObjCC implements IConfigObj {
     @Override
     public String getConfigObjId() {
         return id;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this){
+            return true;
+        }
+        if(obj == null){
+            return false;
+        }
+        if(getClass() != obj.getClass()){
+            return false;
+        }
+
+        ObjC other = (ObjC) obj;
+
+        return Float.floatToIntBits(paramCC1) == Float.floatToIntBits(other.paramCC1)
+                && paramC.equals(other.paramC)
+                && paramCC2.equals(other.paramCC2)
+                && id.equals(other.id);
     }
 }

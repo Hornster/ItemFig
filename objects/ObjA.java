@@ -29,4 +29,22 @@ public class ObjA extends ConfigObj {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this){
+            return true;
+        }
+        if(obj == null){
+            return false;
+        }
+        if(getClass() != obj.getClass()){
+            return false;
+        }
+
+        ObjA other = (ObjA) obj;
+
+        return Float.floatToIntBits(paramA1) == Float.floatToIntBits(other.paramA1)
+                    && Float.floatToIntBits(paramA2) == Float.floatToIntBits(other.paramA2)
+                && _myID.equals(other._myID);
+    }
 }

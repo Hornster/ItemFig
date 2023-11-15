@@ -30,5 +30,22 @@ public class ObjB extends ConfigObj {
             paramB2 = DefaultVals.OBJB_PARAMB2;
         }
     }
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this){
+            return true;
+        }
+        if(obj == null){
+            return false;
+        }
+        if(getClass() != obj.getClass()){
+            return false;
+        }
 
+        ObjB other = (ObjB) obj;
+
+        return Float.floatToIntBits(paramB1) == Float.floatToIntBits(other.paramB1)
+                && paramB2.equals(other.paramB2)
+                && _myID.equals(other._myID);
+    }
 }

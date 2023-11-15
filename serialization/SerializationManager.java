@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static serialization.Constants.EMPTY_CONFIG_READ_WARN;
+import static serialization.Constants.EMPTY_CONFIG_SAVE_WARN;
+
 public class SerializationManager {
     private final String _registeredObjectsFieldName = "registeredObjects";
     /**
@@ -29,7 +32,9 @@ public class SerializationManager {
     private final String _jsonExtension = ".json";
 
     private Consumer<String> _configSaveErrHandler;
+    private Consumer<String> _configSaveWarnHandler;
     private Consumer<String> _configReadErrHandler;
+    private Consumer<String> _configReadWarnHandler;
 
     /**
      * Set to TRUE if there was a deserialization error that made it impossible to read
@@ -69,9 +74,15 @@ public class SerializationManager {
     public void registerSaveErrorHandler(Consumer<String> handler) {
         _configSaveErrHandler = handler;
     }
+    public void registerSaveWarningHandler(Consumer<String> handler) {
+        _configSaveWarnHandler = handler;
+    }
 
     public void registerReadErrorHandler(Consumer<String> handler) {
         _configReadErrHandler = handler;
+    }
+    public void registerReadWarningHandler(Consumer<String> handler) {
+        _configReadWarnHandler = handler;
     }
 
     /**
@@ -92,7 +103,10 @@ public class SerializationManager {
      */
     private void reportDeserializationError(String msg) {
         _jsonDeserializationError = true;
-        _configReadErrHandler.accept(msg);
+        if(_configReadErrHandler != null){
+            _configReadErrHandler.accept(msg);
+        }
+        //TODO report to LOGGER here
     }
 
     /**
@@ -101,7 +115,23 @@ public class SerializationManager {
      * despite key being present.
      */
     private void reportDeserializationWarning(String msg) {
-        _configReadErrHandler.accept(msg);
+        if(_configReadWarnHandler != null){
+            _configReadWarnHandler.accept(msg);
+        }
+        //TODO report to LOGGER here
+    }
+
+    private void reportSerializationWarning(String msg){
+        if(_configSaveWarnHandler != null){
+            _configSaveWarnHandler.accept(msg);
+        }
+        //TODO report to LOGGER here
+    }
+    private void reportSerializationError(String msg){
+        if(_configSaveErrHandler != null){
+            _configSaveErrHandler.accept(msg);
+        }
+        //TODO report to LOGGER here
     }
 
     private void chkIfExtensionProvided() {
@@ -119,12 +149,14 @@ public class SerializationManager {
         var jsonRegisteredObjects = jsonConfigObj.getAsJsonObject("_registeredObjects");
 
         if (jsonRegisteredObjects == null) {
+            reportDeserializationWarning(EMPTY_CONFIG_READ_WARN);
             return; //Nothing to do here, there is no config in the file. We will read default data and recreate
             //the config file with it.
         }
 
         var jsonRegisteredObjectsSet = jsonRegisteredObjects.asMap();
         var keys = jsonRegisteredObjectsSet.keySet();
+
         for (var key : keys) {
             var jsonElement = jsonRegisteredObjectsSet.get(key);
             if (!jsonElement.isJsonObject()) {
@@ -159,9 +191,9 @@ public class SerializationManager {
         try {
             Files.delete(path);
         } catch (NoSuchFileException ex) {
-            reportDeserializationWarning("Config file not found. No need to delete.");
+            //reportSerializationWarning("Config file not found. No need to delete.");
         } catch (IOException ex) {
-            reportDeserializationWarning(ex.getMessage());
+            reportSerializationError(ex.getMessage());
         }
 
         saveConfig();
@@ -193,7 +225,6 @@ public class SerializationManager {
         }
 
         chkDefaultValues();
-
 
         if (_forceConfigSave
                 || (_updateConfigSave && !_jsonDeserializationError)) {
@@ -229,8 +260,12 @@ public class SerializationManager {
         var result = "";
         var path = Paths.get(fileName);
         var readLines = Files.readAllLines(path);
+        var sb = new StringBuilder();
 
-        result = new StringBuilder().append(readLines).toString();
+        for(var readLine : readLines){
+            sb.append(readLine);
+        }
+        result = sb.toString();
 
         return result;
     }
@@ -265,6 +300,10 @@ public class SerializationManager {
         rootJsonObj.add(_registeredObjectsFieldName, modifiedConfigMapJsonElement);
 
         var jsonData = gson.toJson(rootJsonObj);
+
+        if(_registeredObjects.size() == 0){
+            reportSerializationWarning(EMPTY_CONFIG_SAVE_WARN);
+        }
 
         var fileWriter = new FileWriter(_jsonFileName);
         fileWriter.write(jsonData);

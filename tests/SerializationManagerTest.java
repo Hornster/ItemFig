@@ -3,23 +3,27 @@ package tests;
 import objects.ObjA;
 import objects.ObjB;
 import objects.ObjC;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import serialization.IConfigObj;
 import serialization.SerializationManager;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static serialization.Constants.EMPTY_CONFIG_READ_WARN;
+import static serialization.Constants.EMPTY_CONFIG_SAVE_WARN;
 
 
 class SerializationManagerTest {
     private final static String OBJ_A_NAME = "ObjA";
     private final static String OBJ_B_NAME = "ObjB";
     private final static String OBJ_C_NAME = "ObjC";
+
     private SerializationManager _serializationManager;
 
     @BeforeEach
@@ -43,7 +47,23 @@ class SerializationManagerTest {
         return list;
     }
 
+    private static void RemoveConfig(String path){
+        var pathToFile= Paths.get(path);
+        try{
+            Files.delete(pathToFile);
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    private static boolean chkIfFilePresent(String path){
+        var pathToFile= Paths.get(path);
+        return Files.exists(pathToFile);
+    }
+
     @Test
+    @Order(1)
     void registerObjectOK() {
         var newObjectA = new ObjA(OBJ_A_NAME);
         var newObjectB = new ObjB(OBJ_B_NAME);
@@ -59,6 +79,7 @@ class SerializationManagerTest {
     }
 
     @Test
+    @Order(1)
     void registerObjectsOK() {
         var list = createObjListOK();
 
@@ -70,6 +91,7 @@ class SerializationManagerTest {
     }
 
     @Test
+    @Order(1)
     void registerSaveErrorHandler() {
         try{
             _serializationManager.registerSaveErrorHandler((ass) -> {var ass2 = ass;});
@@ -79,6 +101,7 @@ class SerializationManagerTest {
     }
 
     @Test
+    @Order(1)
     void registerReadErrorHandler() {
         try{
             _serializationManager.registerReadErrorHandler((ass) -> {var ass2 = ass;});
@@ -88,19 +111,104 @@ class SerializationManagerTest {
     }
 
     @Test
+    @Order(1)
     void setConfigFileName() {
         try{
             _serializationManager.setConfigFileName("testName");
         }catch(Exception ex){
-            fail("Should not throw any exceptions upon trying to return properly registered config objects!");
+            fail("Should not throw any exceptions upon trying to return properly registered config objects! Additional info: " + ex.getMessage());
         }
     }
 
     @Test
-    void readConfig() {
+    @Order(1)
+    void recreateEmptyConfig(){
+        _serializationManager._recreateConfig = true;
+        var wasReported = new AtomicBoolean(false);
+
+        Consumer<String> reporter = (String warnMsg) ->{
+            System.out.println(warnMsg);
+            wasReported.set(true);
+            if(!warnMsg.equals(EMPTY_CONFIG_SAVE_WARN)){
+                fail("Incorrect warning msg returned about saved empty config!");
+            }
+        };
+
+        _serializationManager.registerSaveWarningHandler(reporter);
+
+        try{
+            _serializationManager.readConfig();
+        }
+        catch(Exception ex){
+            fail("Recreating config should not throw exception in this case! Additional info: " + ex.getMessage());
+        }
+
+        if(!wasReported.get()){
+            fail("Warning about empty file not reported!");
+        }
+        _serializationManager._recreateConfig = false;
+    }
+
+    @Test
+    @Order(2)
+    void readEmptyConfig(){
+        recreateEmptyConfig();
+        var wasReported = new AtomicBoolean(false);
+
+        Consumer<String> reporter = (String warnMsg) ->{
+            System.out.println(warnMsg);
+            wasReported.set(true);
+            if(!warnMsg.equals(EMPTY_CONFIG_READ_WARN)){
+                fail("Incorrect warning msg returned about saved empty config!");
+            }
+        };
+
+        _serializationManager.registerReadWarningHandler(reporter);
+
+        try{
+            _serializationManager.readConfig();
+        }
+        catch(Exception ex){
+            fail("Recreating config should not throw exception in this case! Additional info: " + ex.getMessage());
+        }
+
+        if(!wasReported.get()){
+            fail("Warning about empty file not reported!");
+        }
+    }
+
+    @Test
+    @Order(2)
+    void readConfigSingle() {
+
+    }
+    @Test
+    @Order(2)
+    void readConfigMultiple() {
 
     }
 
+    @Test
+    @Order(2)
+    void readConfigSingleLacksData() {
+
+    }
+    @Test
+    @Order(2)
+    void readConfigMultipleLacksData() {
+
+    }
+    @Test
+    @Order(2)
+    void readConfigMultipleLacksObject() {
+
+    }
+
+    @Test
+    @Order(2)
+    void readConfigMultipleLacksObjectOK() {
+
+    }
     @Test
     void getItemConfigSingleRegisterOK() {
         var newObjectA = new ObjA(OBJ_A_NAME);
