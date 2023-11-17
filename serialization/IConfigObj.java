@@ -1,12 +1,16 @@
 package serialization;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import com.google.gson.*;
+
+import java.lang.reflect.Type;
 
 public interface IConfigObj {
     /**Checks if any fields were not assigned to during deserialization and
      * assigns default values to them.*/
     void ChkDefaultValues();
+    /**@return the type of the config object class provided during creation. It will be used
+     * by gson to determine what fields need to be read and assigned.*/
+    Type getConfigObjType();
     /**
      * Attempts to read values from provided element.
      * @param element The read element that describes this object.
@@ -20,4 +24,5 @@ public interface IConfigObj {
     String SerializeConfigObj(Gson gson);
     /**@return the unique ID that this object is identified with.*/
     String getConfigObjId();
+
 }

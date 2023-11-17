@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import serialization.ConfigObj;
 import serialization.IConfigObj;
 
-public class ObjB extends ConfigObj {
+public class ObjB extends ConfigObj{
     public Float paramB1;
     public String paramB2;
 

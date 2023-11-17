@@ -47,7 +47,7 @@ class SerializationManagerTest {
         return list;
     }
 
-    private static void RemoveConfig(String path){
+    private static void removeConfig(String path){
         var pathToFile= Paths.get(path);
         try{
             Files.delete(pathToFile);
@@ -175,6 +175,39 @@ class SerializationManagerTest {
         if(!wasReported.get()){
             fail("Warning about empty file not reported!");
         }
+    }
+
+    @Test
+    @Order(2)
+    void recreateConfigFromDefaultsNoFileNoForce(){
+        var objects = createObjListOK();
+        var configPath = _serializationManager.getConfigPath();
+        removeConfig(configPath);
+
+        try{
+            _serializationManager.registerObjects(objects);
+            _serializationManager.readConfig();
+        }
+        catch(Exception ex){
+            fail("Should not throw any exceptions when saving default data to new file! Additional info: " + ex.getMessage());
+        }
+
+        if(!chkIfFilePresent(configPath)){
+            fail("Config file was not created!");
+        }
+        var objectsToValidate = createObjListOK();
+        for(var obj : objectsToValidate){
+            var result = _serializationManager.getItemConfigAutoCast(obj.getConfigObjId());
+            if(result == null){
+                fail("Object of id " + obj.getConfigObjId() + " was not saved in the config!");
+            }
+
+            var isEqual = obj.equals(result);
+            if(!isEqual){
+                fail("Object of id " + obj.getConfigObjId() + "Has different field values than its original!");
+            }
+        }
+
     }
 
     @Test

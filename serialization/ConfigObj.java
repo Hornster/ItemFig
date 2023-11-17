@@ -1,7 +1,7 @@
 package serialization;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import com.google.gson.*;
+import objects.ObjC;
 
 import java.lang.reflect.Type;
 
@@ -17,9 +17,10 @@ public abstract class ConfigObj implements IConfigObj {
         _myID = myID;
     }
 
-    /**Returns the type of the config object class provided during creation. It will be used
-     * by gson to determine what fields need to be read and assigned.*/
-    protected Type getConfigObjType() {
+
+    @Override
+    public Type getConfigObjType() {
+
         return _myType;
     }
     @Override
@@ -38,4 +39,6 @@ public abstract class ConfigObj implements IConfigObj {
     public String getConfigObjId() {
         return _myID;
     }
+
+
 }

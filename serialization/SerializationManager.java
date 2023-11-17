@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import objects.ObjC;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -27,7 +28,7 @@ public class SerializationManager {
      * long as it is unique, obviously..
      */
     private Map<String, IConfigObj> _registeredObjects = new HashMap<>();
-    private final String _jsonPath = "config" + File.pathSeparator;
+    private final String _jsonPath = "config" + File.separator;
     private String _jsonFileName = "mod-config";
     private final String _jsonExtension = ".json";
 
@@ -90,6 +91,11 @@ public class SerializationManager {
      */
     public void setConfigFileName(String name) {
         _jsonFileName = name;
+        chkIfExtensionProvided();
+    }
+    public String getConfigPath(){
+        chkIfExtensionProvided();
+        return _jsonPath + _jsonFileName;
     }
 
     private void reportError(Consumer<String> handler, String msg) {
@@ -178,7 +184,6 @@ public class SerializationManager {
         var registeredObjectsCollection = _registeredObjects.values();
         for (var registeredObj : registeredObjectsCollection) {
             registeredObj.ChkDefaultValues();
-            ;
         }
     }
 
@@ -251,7 +256,7 @@ public class SerializationManager {
      * @param itemId ID of the registered item used to find the item.
      * @return Automatically casts returned config object to provided type.
      */
-    public <T> T getItemConfigAutoCast(String itemId) {
+    public <T extends IConfigObj> T  getItemConfigAutoCast(String itemId) {
         var object = _registeredObjects.get(itemId);
         return (T) object;
     }
@@ -281,7 +286,10 @@ public class SerializationManager {
     }
 
     private Gson getGson() {
-        return new GsonBuilder().setPrettyPrinting().create();
+        return new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(ObjC.class, new ConfigObjCAdapter())
+                .create();
     }
 
     private void saveConfigPerform() throws IOException {
@@ -292,6 +300,7 @@ public class SerializationManager {
         var configMapObj = configMapElement.getAsJsonObject().asMap();
 
         _registeredObjects.forEach((key, configObj) -> {
+            var serializedObjAsJson = gson.toJson(configObj);
             var serializedObj = gson.toJsonTree(configObj);
             configMapObj.put(key, serializedObj);
         });
