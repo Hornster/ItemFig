@@ -14,51 +14,8 @@ public abstract class ConfigObjAdapter<T extends IConfigObj> implements JsonSeri
         var fields = getFields();
         //jsonObject.add("data", jsonSerializationContext.serialize(src));
         for(var field : fields){
-            var fieldType = field.getType();
             try{
-                if (fieldType.equals(char.class)) {
-                    field.setAccessible(true);
-                    jsonObject.addProperty(field.getName(), field.getChar(src));
-                    field.setAccessible(false);
-                }
-                else if (fieldType.equals(int.class)) {
-                    field.setAccessible(true);
-                    jsonObject.addProperty(field.getName(), field.getInt(src));
-                    field.setAccessible(false);
-                }
-                else if (fieldType.equals(short.class)) {
-                    field.setAccessible(true);
-                    jsonObject.addProperty(field.getName(), field.getShort(src));
-                    field.setAccessible(false);
-                }
-                else if (fieldType.equals(float.class)) {
-                    field.setAccessible(true);
-                    jsonObject.addProperty(field.getName(), field.getFloat(src));
-                    field.setAccessible(false);
-                }
-                else if (fieldType.equals(Double.class)) {
-                    field.setAccessible(true);
-                    jsonObject.addProperty(field.getName(), field.getDouble(src));
-                    field.setAccessible(false);
-                }
-                else if (fieldType.equals(String.class)) {
-                    field.setAccessible(true);
-                    jsonObject.addProperty(field.getName(), (String)field.get(src));
-                    field.setAccessible(false);
-                }
-                else if (fieldType.equals(long.class)) {
-                    field.setAccessible(true);
-                    jsonObject.addProperty(field.getName(), field.getLong(src));
-                    field.setAccessible(false);
-                }
-                else if (fieldType.equals(boolean.class)) {
-                    field.setAccessible(true);
-                    jsonObject.addProperty(field.getName(), field.getBoolean(src));
-                    field.setAccessible(false);
-                }
-                else{
-                    throw new Exception("Unknown field type during serialization: " + fieldType.getTypeName());
-                }
+                SerializationHelper.addProperty(field, jsonObject, src);
             }
             catch(IllegalAccessException ex){
                 System.out.println("Could not access the field " + field.getName() + " during serialization! " + ex.getMessage());
