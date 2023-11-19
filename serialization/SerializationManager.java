@@ -312,7 +312,6 @@ public class SerializationManager {
         var configMapObj = configMapElement.getAsJsonObject().asMap();
 
         _registeredObjects.forEach((key, configObj) -> {
-            var serializedObjAsJson = gson.toJson(configObj);
             var serializedObj = gson.toJsonTree(configObj);
             configMapObj.put(key, serializedObj);
         });

@@ -13,6 +13,7 @@ import serialization.adapters.ConfigObjAdapter;
 import serialization.adapters.ConfigObjBAdapter;
 import serialization.adapters.ConfigObjCAdapter;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -195,7 +196,7 @@ class SerializationManagerTest {
     @Order(2)
     void recreateConfigFromDefaultsNoFileNoForce(){
         var objects = createObjListOK();
-        var configPath = _serializationManager.getConfigPath();
+        var configPath = System.getProperty("user.dir") + File.separator + _serializationManager.getConfigPath();
         removeConfig(configPath);
         //TODO The file is not being saved in config folder.
         //TODO You need to retrieve fields from classes higher in hierarchy for serializer.
