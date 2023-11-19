@@ -1,11 +1,10 @@
 package serialization;
 
 import com.google.gson.*;
-import objects.ObjC;
 
 import java.lang.reflect.Type;
 
-public abstract class ConfigObj implements IConfigObj {
+public abstract class ConfigObj {//} implements IConfigObj {
     protected Type _myType;
     protected String _myID;
     /**
@@ -17,25 +16,27 @@ public abstract class ConfigObj implements IConfigObj {
         _myID = myID;
     }
 
-
-    @Override
+    /**Checks if any fields were not assigned to during deserialization and
+     * assigns default values to them.*/
+    public abstract void chkDefaultValues();
+    //@Override
     public Type getConfigObjType() {
 
         return _myType;
     }
-    @Override
-    public IConfigObj DeserializeConfigObj(Gson gson, JsonElement element) {
+    //@Override
+    public ConfigObj DeserializeConfigObj(Gson gson, JsonElement element) {
         var result = gson.fromJson(element, getConfigObjType());
 
-        return (IConfigObj)result;
+        return (ConfigObj)result;
     }
 
-    @Override
+    //@Override
     public String SerializeConfigObj(Gson gson) {
         return gson.toJson(this);
     }
 
-    @Override
+    //@Override
     public String getConfigObjId() {
         return _myID;
     }

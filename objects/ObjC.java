@@ -3,17 +3,19 @@ package objects;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import serialization.ConfigObj;
 import serialization.IConfigObj;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-public class ObjC extends ObjCC implements IConfigObj {
+public class ObjC extends ObjCC  {
     public String id;
     private final Type thisType = ObjC.class;
     public Integer paramC;
 
     public ObjC(String id, int paramC, float paramCC1, String paramCC2){
+        super(ObjC.class, id);
         this.paramC = paramC;
         this.paramCC1 = paramCC1;
         this.paramCC2 = paramCC2;
@@ -21,11 +23,12 @@ public class ObjC extends ObjCC implements IConfigObj {
     }
 
     public ObjC(String id) {
+        super(ObjC.class, id);
         this.id = id;
     }
 
     @Override
-    public void ChkDefaultValues() {
+    public void chkDefaultValues() {
         if(paramC == null){
             paramC = DefaultVals.OBJC_PARAMC1;
         }
@@ -43,7 +46,7 @@ public class ObjC extends ObjCC implements IConfigObj {
     }
 
         @Override
-    public IConfigObj DeserializeConfigObj(Gson gson, JsonElement element) {
+    public ConfigObj DeserializeConfigObj(Gson gson, JsonElement element) {
         var deserializedObj = (ObjC)gson.fromJson(element,thisType);
         return deserializedObj;
     }

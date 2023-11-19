@@ -4,8 +4,14 @@ import objects.ObjA;
 import objects.ObjB;
 import objects.ObjC;
 import org.junit.jupiter.api.*;
+import org.testng.internal.collections.Pair;
+import serialization.ConfigObj;
 import serialization.IConfigObj;
 import serialization.SerializationManager;
+import serialization.adapters.ConfigObjAAdapter;
+import serialization.adapters.ConfigObjAdapter;
+import serialization.adapters.ConfigObjBAdapter;
+import serialization.adapters.ConfigObjCAdapter;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -34,15 +40,19 @@ class SerializationManagerTest {
     void tearDown() {
         _serializationManager = null;
     }
-    private static List<IConfigObj> createObjListOK(){
+    private static List<Pair<ConfigObj, ConfigObjAdapter<?>>> createObjListOK(){
         var newObjectA = new ObjA(OBJ_A_NAME);
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
 
-        var list = new LinkedList<IConfigObj>();
-        list.add(newObjectA);
-        list.add(newObjectB);
-        list.add(newObjectC);
+        var newAdapterObjA = new ConfigObjAAdapter();
+        var newAdapterObjB = new ConfigObjBAdapter();
+        var newAdapterObjC = new ConfigObjCAdapter();
+
+        var list = new LinkedList<Pair<ConfigObj, ConfigObjAdapter<?>>>();
+        list.add(new Pair<>(newObjectA, newAdapterObjA));
+        list.add(new Pair<>(newObjectB, newAdapterObjB));
+        list.add(new Pair<>(newObjectC, newAdapterObjC));
 
         return list;
     }
@@ -69,10 +79,14 @@ class SerializationManagerTest {
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
 
+        var newAdapterObjA = new ConfigObjAAdapter();
+        var newAdapterObjB = new ConfigObjBAdapter();
+        var newAdapterObjC = new ConfigObjCAdapter();
+
         try{
-            _serializationManager.registerObject(newObjectA);
-            _serializationManager.registerObject(newObjectB);
-            _serializationManager.registerObject(newObjectC);
+            _serializationManager.registerObject(newObjectA, newAdapterObjA);
+            _serializationManager.registerObject(newObjectB, newAdapterObjB);
+            _serializationManager.registerObject(newObjectC, newAdapterObjC);
         }catch(Exception ex){
             fail("Should not throw any exceptions upon trying to return properly registered config objects!");
         }
@@ -197,14 +211,15 @@ class SerializationManagerTest {
         }
         var objectsToValidate = createObjListOK();
         for(var obj : objectsToValidate){
-            var result = _serializationManager.getItemConfigAutoCast(obj.getConfigObjId());
+            var configObj = obj.first();
+            var result = _serializationManager.getItemConfigAutoCast(configObj.getConfigObjId());
             if(result == null){
-                fail("Object of id " + obj.getConfigObjId() + " was not saved in the config!");
+                fail("Object of id " + configObj.getConfigObjId() + " was not saved in the config!");
             }
 
-            var isEqual = obj.equals(result);
+            var isEqual = configObj.equals(result);
             if(!isEqual){
-                fail("Object of id " + obj.getConfigObjId() + "Has different field values than its original!");
+                fail("Object of id " + configObj.getConfigObjId() + "Has different field values than its original!");
             }
         }
 
@@ -248,10 +263,14 @@ class SerializationManagerTest {
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
 
+        var newAdapterObjA = new ConfigObjAAdapter();
+        var newAdapterObjB = new ConfigObjBAdapter();
+        var newAdapterObjC = new ConfigObjCAdapter();
+
         try{
-            _serializationManager.registerObject(newObjectA);
-            _serializationManager.registerObject(newObjectB);
-            _serializationManager.registerObject(newObjectC);
+            _serializationManager.registerObject(newObjectA, newAdapterObjA);
+            _serializationManager.registerObject(newObjectB, newAdapterObjB);
+            _serializationManager.registerObject(newObjectC, newAdapterObjC);
 
             var regObj = _serializationManager.getItemConfig(OBJ_A_NAME);
             newObjectA = (ObjA) regObj;
@@ -270,10 +289,14 @@ class SerializationManagerTest {
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
 
+        var newAdapterObjA = new ConfigObjAAdapter();
+        var newAdapterObjB = new ConfigObjBAdapter();
+        var newAdapterObjC = new ConfigObjCAdapter();
+
         try{
-            _serializationManager.registerObject(newObjectA);
-            _serializationManager.registerObject(newObjectB);
-            _serializationManager.registerObject(newObjectC);
+            _serializationManager.registerObject(newObjectA, newAdapterObjA);
+            _serializationManager.registerObject(newObjectB, newAdapterObjB);
+            _serializationManager.registerObject(newObjectC, newAdapterObjC);
 
             newObjectA = _serializationManager.getItemConfigAutoCast(OBJ_A_NAME);
             newObjectB = _serializationManager.getItemConfigAutoCast(OBJ_B_NAME);

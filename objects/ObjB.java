@@ -21,7 +21,7 @@ public class ObjB extends ConfigObj{
     }
 
     @Override
-    public void ChkDefaultValues() {
+    public void chkDefaultValues() {
 
         if(paramB1 == null){
             paramB1 = DefaultVals.OBJB_PARAMB1;

@@ -1,12 +1,14 @@
-package serialization;
+package serialization.adapters;
 
 import com.google.gson.*;
 import objects.ObjC;
+import serialization.ConfigObj;
+import serialization.SerializationHelper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
-public abstract class ConfigObjAdapter<T extends IConfigObj> implements JsonSerializer<T>, JsonDeserializer<T> {
+public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSerializer<T>, JsonDeserializer<T> {
     @Override
     public JsonElement serialize(T src, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject jsonObject = new JsonObject();

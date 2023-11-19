@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 public interface IConfigObj {
     /**Checks if any fields were not assigned to during deserialization and
      * assigns default values to them.*/
-    void ChkDefaultValues();
+    void chkDefaultValues();
     /**@return the type of the config object class provided during creation. It will be used
      * by gson to determine what fields need to be read and assigned.*/
     Type getConfigObjType();

@@ -20,7 +20,7 @@ public class ObjA extends ConfigObj {
     }
 
     @Override
-    public void ChkDefaultValues() {
+    public void chkDefaultValues() {
         if(paramA1 == null){
             paramA1 = DefaultVals.OBJA_PARAMA1;
         }

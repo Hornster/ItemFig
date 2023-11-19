@@ -1,4 +1,4 @@
-package serialization;
+package serialization.adapters;
 
 import objects.ObjC;
 

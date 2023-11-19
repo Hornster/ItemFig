@@ -1,5 +1,6 @@
 import com.google.gson.Gson;
 import objects.*;
+import serialization.ConfigObj;
 import serialization.IConfigObj;
 import serialization.SerializationManager;
 
@@ -19,7 +20,7 @@ public class GSONTests {
 
         var dataObj = new DataObj();
 
-        var list = new LinkedList<IConfigObj> ();
+        var list = new LinkedList<ConfigObj> ();
         list.add(objA);
         list.add(objA2);
         list.add(objB);
@@ -30,10 +31,10 @@ public class GSONTests {
         var testReg = new SerializationManager();
 
 
-        testReg.registerObjects(list);
-        testReg.readConfig();
-
-        var obj = testReg.getItemConfigAutoCast("ObjA");
+//        testReg.registerObjects(list);
+//        testReg.readConfig();
+//
+//        var obj = testReg.getItemConfigAutoCast("ObjA");
 
     }
     public static void readData(){

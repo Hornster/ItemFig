@@ -5,14 +5,19 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import objects.ObjC;
+import org.testng.internal.collections.Pair;
+import serialization.adapters.ConfigObjAdapter;
+import serialization.adapters.ConfigObjCAdapter;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -27,7 +32,8 @@ public class SerializationManager {
      * The key is preferably the ID used in mod for given item, but can be something else as
      * long as it is unique, obviously..
      */
-    private Map<String, IConfigObj> _registeredObjects = new HashMap<>();
+    private Map<String, ConfigObj> _registeredObjects = new LinkedHashMap<>();
+    private Map<Type, ConfigObjAdapter<?>> _registeredObjectsAdapters = new HashMap<>();
     private final String _jsonPath = "config" + File.separator;
     private String _jsonFileName = "mod-config";
     private final String _jsonExtension = ".json";
@@ -59,16 +65,19 @@ public class SerializationManager {
     /**
      * Registers a data object for serialization.
      */
-    public void registerObject(IConfigObj object) {
+    public void registerObject(ConfigObj object, ConfigObjAdapter<?> adapter) {
         _registeredObjects.put(object.getConfigObjId(), object);
+        _registeredObjectsAdapters.put(object.getConfigObjType(), adapter);
     }
 
     /**
      * Registers multiple data objects for serialization.
      */
-    public void registerObjects(List<IConfigObj> objects) {
+    public void registerObjects(List<Pair<ConfigObj, ConfigObjAdapter<?>>> objects) {
         for (var obj : objects) {
-            _registeredObjects.put(obj.getConfigObjId(), obj);
+            var configObj = obj.first();
+            _registeredObjects.put(configObj.getConfigObjId(), configObj);
+            _registeredObjectsAdapters.put(configObj.getConfigObjType(), obj.second());
         }
     }
 
@@ -183,7 +192,7 @@ public class SerializationManager {
     private void chkDefaultValues() {
         var registeredObjectsCollection = _registeredObjects.values();
         for (var registeredObj : registeredObjectsCollection) {
-            registeredObj.ChkDefaultValues();
+            registeredObj.chkDefaultValues();
         }
     }
 
@@ -245,7 +254,7 @@ public class SerializationManager {
      * @return Object described by provided itemId or null if none present.
      */
 
-    public IConfigObj getItemConfig(String itemId) {
+    public ConfigObj getItemConfig(String itemId) {
         var object = _registeredObjects.get(itemId);
         return object;
     }
@@ -256,7 +265,7 @@ public class SerializationManager {
      * @param itemId ID of the registered item used to find the item.
      * @return Automatically casts returned config object to provided type.
      */
-    public <T extends IConfigObj> T  getItemConfigAutoCast(String itemId) {
+    public <T extends ConfigObj> T  getItemConfigAutoCast(String itemId) {
         var object = _registeredObjects.get(itemId);
         return (T) object;
     }
@@ -286,17 +295,20 @@ public class SerializationManager {
     }
 
     private Gson getGson() {
-        return new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(ObjC.class, new ConfigObjCAdapter())
-                .create();
+        var gsonBuilder = new GsonBuilder()
+                .setPrettyPrinting();
+        for(var adapterType : _registeredObjectsAdapters.keySet()){
+            gsonBuilder.registerTypeAdapter(adapterType, _registeredObjectsAdapters.get(adapterType));
+        }
+
+         return gsonBuilder.create();
     }
 
     private void saveConfigPerform() throws IOException {
         var gson = getGson();
 
         var rootJsonObj = new JsonObject();
-        var configMapElement = gson.toJsonTree(new HashMap<String, IConfigObj>());
+        var configMapElement = gson.toJsonTree(new HashMap<String, ConfigObj>());
         var configMapObj = configMapElement.getAsJsonObject().asMap();
 
         _registeredObjects.forEach((key, configObj) -> {
