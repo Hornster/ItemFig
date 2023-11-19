@@ -197,7 +197,8 @@ class SerializationManagerTest {
         var objects = createObjListOK();
         var configPath = _serializationManager.getConfigPath();
         removeConfig(configPath);
-
+        //TODO The file is not being saved in config folder.
+        //TODO You need to retrieve fields from classes higher in hierarchy for serializer.
         try{
             _serializationManager.registerObjects(objects);
             _serializationManager.readConfig();
