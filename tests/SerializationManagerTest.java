@@ -196,7 +196,7 @@ class SerializationManagerTest {
     @Order(2)
     void recreateConfigFromDefaultsNoFileNoForce(){
         var objects = createObjListOK();
-        var configPath = System.getProperty("user.dir") + File.separator + _serializationManager.getConfigPath();
+        var configPath = _serializationManager.getConfigPath() + _serializationManager.getConfigFileName();
         removeConfig(configPath);
         //TODO The file is not being saved in config folder.
         //TODO You need to retrieve fields from classes higher in hierarchy for serializer.
@@ -214,6 +214,7 @@ class SerializationManagerTest {
         var objectsToValidate = createObjListOK();
         for(var obj : objectsToValidate){
             var configObj = obj.first();
+            configObj.chkDefaultValues();
             var result = _serializationManager.getItemConfigAutoCast(configObj.getConfigObjId());
             if(result == null){
                 fail("Object of id " + configObj.getConfigObjId() + " was not saved in the config!");

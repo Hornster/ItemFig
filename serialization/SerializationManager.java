@@ -34,7 +34,7 @@ public class SerializationManager {
      */
     private Map<String, ConfigObj> _registeredObjects = new LinkedHashMap<>();
     private Map<Type, ConfigObjAdapter<?>> _registeredObjectsAdapters = new HashMap<>();
-    private final String _jsonPath = "config" + File.separator;
+    private final String _jsonPath = System.getProperty("user.dir") + File.separator + "config" + File.separator;
     private String _jsonFileName = "mod-config";
     private final String _jsonExtension = ".json";
 
@@ -100,11 +100,14 @@ public class SerializationManager {
      */
     public void setConfigFileName(String name) {
         _jsonFileName = name;
+    }
+    public String getConfigFileName(){
         chkIfExtensionProvided();
+        return _jsonFileName;
     }
     public String getConfigPath(){
         chkIfExtensionProvided();
-        return _jsonPath + _jsonFileName;
+        return _jsonPath;
     }
 
     private void reportError(Consumer<String> handler, String msg) {
@@ -201,7 +204,7 @@ public class SerializationManager {
      */
     private void recreateConfig(Gson gson) {
         chkDefaultValues();
-        var path = Paths.get(_jsonPath, _jsonFileName);
+        var path = Paths.get(getConfigPath());
         try {
             Files.delete(path);
         } catch (NoSuchFileException ex) {
@@ -229,16 +232,17 @@ public class SerializationManager {
 
         String configStr = "";
 
+        chkDefaultValues();
+
         try {
-            configStr = readFile(_jsonFileName);
+            var filePath = getConfigPath() + getConfigFileName();
+            configStr = readFile(filePath);
             deserializeFile(gsonObj, configStr);
         } catch (IOException ex) {
             if (_configReadErrHandler != null) {
                 _configReadErrHandler.accept(ex.getMessage());
             }
         }
-
-        chkDefaultValues();
 
         if (_forceConfigSave
                 || (_updateConfigSave && !_jsonDeserializationError)) {
@@ -325,7 +329,9 @@ public class SerializationManager {
             reportSerializationWarning(EMPTY_CONFIG_SAVE_WARN);
         }
 
-        var fileWriter = new FileWriter(_jsonFileName);
+        var configPath = getConfigPath();
+        new File(configPath).mkdirs();
+        var fileWriter = new FileWriter(configPath + getConfigFileName());
         fileWriter.write(jsonData);
         fileWriter.close();
     }
