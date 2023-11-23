@@ -6,15 +6,17 @@ import objects.ObjC;
 import org.junit.jupiter.api.*;
 import org.testng.internal.collections.Pair;
 import serialization.ConfigObj;
-import serialization.IConfigObj;
 import serialization.SerializationManager;
 import serialization.adapters.ConfigObjAAdapter;
 import serialization.adapters.ConfigObjAdapter;
 import serialization.adapters.ConfigObjBAdapter;
 import serialization.adapters.ConfigObjCAdapter;
 
-import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +32,8 @@ class SerializationManagerTest {
     private final static String OBJ_A_NAME = "ObjA";
     private final static String OBJ_B_NAME = "ObjB";
     private final static String OBJ_C_NAME = "ObjC";
+
+
 
     private SerializationManager _serializationManager;
 
@@ -57,7 +61,17 @@ class SerializationManagerTest {
 
         return list;
     }
+    private static void prepareConfig(String data, String configPath){
+        try{
+            var configFile = new FileWriter(configPath);
+            configFile.write(data);
+            configFile.close();
+        }
+        catch(IOException ex){
+            fail("Could not prepare config! Additional info: " + ex.getMessage());
+        }
 
+    }
     private static void removeConfig(String path){
         var pathToFile= Paths.get(path);
         try{
@@ -68,9 +82,37 @@ class SerializationManagerTest {
         }
     }
 
-    private static boolean chkIfFilePresent(String path){
+    private static void chkIfFilePresent(String path){
         var pathToFile= Paths.get(path);
-        return Files.exists(pathToFile);
+        var chkResult =  Files.exists(pathToFile);
+        if(!chkResult){
+            fail("Config file was not created/stopped existing unrightfully!");
+        }
+    }
+
+    private static void chkConfigFileContents(String originalContents, String configPath){
+        try{
+            var filePath = Path.of(configPath);
+            String content = Files.readString(filePath);
+            if(!content.equals(originalContents)){
+                fail("Saved and original contents in config file differ!");
+            }
+        }
+        catch(IOException ex){
+            fail("Could not prepare config! Additional info: " + ex.getMessage());
+        }
+    }
+
+    private static void chkIfResultPresent(ConfigObj result, ConfigObj configSrc){
+        if(result == null){
+            fail("Object of id " + configSrc.getConfigObjId() + " was not saved in the config!");
+        }
+    }
+    private static void chkIfResultEqualsSource(ConfigObj result, ConfigObj configSrc){
+        var isEqual = configSrc.equals(result);
+        if(!isEqual){
+            fail("Object of id " + configSrc.getConfigObjId() + "Has different field values than its original!");
+        }
     }
 
     @Test
@@ -198,8 +240,7 @@ class SerializationManagerTest {
         var objects = createObjListOK();
         var configPath = _serializationManager.getConfigPath() + _serializationManager.getConfigFileName();
         removeConfig(configPath);
-        //TODO The file is not being saved in config folder.
-        //TODO You need to retrieve fields from classes higher in hierarchy for serializer.
+
         try{
             _serializationManager.registerObjects(objects);
             _serializationManager.readConfig();
@@ -208,9 +249,8 @@ class SerializationManagerTest {
             fail("Should not throw any exceptions when saving default data to new file! Additional info: " + ex.getMessage());
         }
 
-        if(!chkIfFilePresent(configPath)){
-            fail("Config file was not created!");
-        }
+        chkIfFilePresent(configPath);
+
         var objectsToValidate = createObjListOK();
         for(var obj : objectsToValidate){
             var configObj = obj.first();
@@ -230,13 +270,42 @@ class SerializationManagerTest {
 
     @Test
     @Order(2)
-    void readConfigSingle() {
+    void readConfigSingleWithHierarchy() {
+        var configPath = _serializationManager.getConfigPath() + _serializationManager.getConfigFileName();
+        var testObjC = TestCases.OBJC_TEST_FULL_CUSTOM_DATA;
+        prepareConfig(TestCases.CONFIG_FULL_FIELDS_SINGLE_OBJ, configPath);
 
+        _serializationManager.registerObject(testObjC, new ConfigObjCAdapter());
+
+        _serializationManager.readConfig();
+
+        var readObjC = (ObjC)_serializationManager.getItemConfig(testObjC.getConfigObjId());
+        chkIfFilePresent(configPath);
+        chkIfResultPresent(readObjC, testObjC);
+        chkIfResultEqualsSource(readObjC, testObjC);
+        chkConfigFileContents(TestCases.CONFIG_FULL_FIELDS_SINGLE_OBJ, configPath);
     }
     @Test
     @Order(2)
     void readConfigMultiple() {
+        var configPath = _serializationManager.getConfigPath() + _serializationManager.getConfigFileName();
+        var testObjA = TestCases.OBJA_TEST_FULL_CUSTOM_DATA;
+        var testObjB = TestCases.OBJB_TEST_FULL_CUSTOM_DATA;
+        var testObjC = TestCases.OBJC_TEST_FULL_CUSTOM_DATA;
+        prepareConfig(TestCases.CONFIG_FULL_ALL_CHANGED, configPath);
 
+        var idsList = new LinkedList<String>();
+        idsList.add(testObjA.getConfigObjId());
+        idsList.add(testObjB.getConfigObjId());
+        idsList.add(testObjC.getConfigObjId());
+
+        for(var objId : idsList){
+            var readObj = (ConfigObj) _serializationManager.getItemConfig(objId);
+            chkIfFilePresent(configPath);
+            chkIfResultPresent(readObj, testObjC);
+            chkIfResultEqualsSource(readObj, testObjC);
+        }
+        chkConfigFileContents(TestCases.CONFIG_FULL_ALL_CHANGED, configPath);
     }
 
     @Test

@@ -164,7 +164,7 @@ public class SerializationManager {
             reportDeserializationError("Base json element is not a json object!");
         }
         var jsonConfigObj = jsonConfigElement.getAsJsonObject();
-        var jsonRegisteredObjects = jsonConfigObj.getAsJsonObject("_registeredObjects");
+        var jsonRegisteredObjects = jsonConfigObj.getAsJsonObject(_registeredObjectsFieldName);
 
         if (jsonRegisteredObjects == null) {
             reportDeserializationWarning(EMPTY_CONFIG_READ_WARN);
@@ -225,14 +225,14 @@ public class SerializationManager {
         _jsonDeserializationError = false;
         var gsonObj = getGson();
 
+        String configStr = "";
+
+        chkDefaultValues();
+
         if (_recreateConfig) {
             recreateConfig(gsonObj);
             return;
         }
-
-        String configStr = "";
-
-        chkDefaultValues();
 
         try {
             var filePath = getConfigPath() + getConfigFileName();

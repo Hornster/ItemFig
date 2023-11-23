@@ -1,5 +1,6 @@
 package serialization;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.lang.reflect.Field;
@@ -42,5 +43,58 @@ public class SerializationHelper {
         if(!wasAccessible){
             field.setAccessible(false);
         }
+    }
+
+    public static void readProperty(Field field, JsonObject jsonObject, Object dest) throws Exception {
+        var fieldType = field.getType();
+        var jsonFieldElement = jsonObject.get(field.getName());
+
+        if(jsonFieldElement == null){
+            //TODO Add LOGGER WARN/INFO
+            //We ignore simply non-existent fields in config. They will get their default values.
+            return;
+        }
+        if(!jsonFieldElement.isJsonPrimitive()){
+            throw new Exception("Objects as config fields are not supported at the moment!");
+        }
+        var jsonFieldVal = jsonFieldElement.getAsJsonPrimitive();
+        var wasAccessible = field.canAccess(dest);
+
+        field.setAccessible(true);
+
+        if (fieldType.equals(Character.class)) {
+            field.setChar(dest, jsonFieldVal.getAsString().charAt(0));
+        }
+        else if (fieldType.equals(Integer.class)) {
+            field.setInt(dest, jsonFieldVal.getAsInt());
+        }
+        else if (fieldType.equals(Short.class)) {
+            field.setShort(dest, jsonFieldVal.getAsShort());
+        }
+        else if (fieldType.equals(Float.class)) {
+            field.setFloat(dest, jsonFieldVal.getAsFloat());
+        }
+        else if (fieldType.equals(Double.class)) {
+            field.setDouble(dest, jsonFieldVal.getAsDouble());
+        }
+        else if (fieldType.equals(String.class)) {
+            field.set(dest, jsonFieldVal.getAsString());
+        }
+        else if (fieldType.equals(Long.class)) {
+            field.setLong(dest, jsonFieldVal.getAsLong());
+        }
+        else if (fieldType.equals(Boolean.class)) {
+            field.setBoolean(dest, jsonFieldVal.getAsBoolean());
+        }
+        else{
+            if(!wasAccessible){
+                field.setAccessible(false);
+            }
+            throw new Exception("Unknown field type during serialization: " + fieldType.getTypeName());
+        }
+        if(!wasAccessible){
+            field.setAccessible(false);
+        }
+
     }
 }
