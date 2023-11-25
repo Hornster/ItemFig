@@ -63,28 +63,29 @@ public class SerializationHelper {
         field.setAccessible(true);
 
         if (fieldType.equals(Character.class)) {
-            field.setChar(dest, jsonFieldVal.getAsString().charAt(0));
+            field.set(dest, jsonFieldVal.getAsString().charAt(0));
         }
         else if (fieldType.equals(Integer.class)) {
-            field.setInt(dest, jsonFieldVal.getAsInt());
+            field.set(dest, jsonFieldVal.getAsInt());
         }
         else if (fieldType.equals(Short.class)) {
-            field.setShort(dest, jsonFieldVal.getAsShort());
+            field.set(dest, jsonFieldVal.getAsShort());
         }
         else if (fieldType.equals(Float.class)) {
-            field.setFloat(dest, jsonFieldVal.getAsFloat());
+            var val = jsonFieldVal.getAsFloat();
+            field.set(dest, val);
         }
         else if (fieldType.equals(Double.class)) {
-            field.setDouble(dest, jsonFieldVal.getAsDouble());
+            field.set(dest, jsonFieldVal.getAsDouble());
         }
         else if (fieldType.equals(String.class)) {
             field.set(dest, jsonFieldVal.getAsString());
         }
         else if (fieldType.equals(Long.class)) {
-            field.setLong(dest, jsonFieldVal.getAsLong());
+            field.set(dest, jsonFieldVal.getAsLong());
         }
         else if (fieldType.equals(Boolean.class)) {
-            field.setBoolean(dest, jsonFieldVal.getAsBoolean());
+            field.set(dest, jsonFieldVal.getAsBoolean());
         }
         else{
             if(!wasAccessible){

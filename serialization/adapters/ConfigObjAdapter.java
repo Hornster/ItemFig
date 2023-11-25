@@ -23,9 +23,6 @@ public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSeria
         JsonObject jsonObject = new JsonObject();
         //jsonObject.addProperty("type", src.getClass().getName());
         var fields = getFields();
-        //TODO change save and tests: the keys for objects should be item ids.
-        //TODO so instead "ObjC": there should be "ItemId":
-        //TODO will probably require changing tests too
         //jsonObject.add("data", jsonSerializationContext.serialize(src));
         for(var field : fields){
             try{
@@ -45,6 +42,11 @@ public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSeria
         return jsonObject;
     }
     protected abstract List<Field> getFields();
+    /**
+     * Used to retrieve the constructor of config object which the adapter takes care of.
+     * The constructor needs to accept a single String type for the ID, as in, item ID.
+     * Example: return ConfigObjClassHere.class.getConstructor(String.class);*/
+    protected abstract Constructor<T> getConstructorForDeserialization() throws NoSuchMethodException;
     protected List<Field> getFields(Class checkedClass){
         if(checkedClass == null){
             return Collections.emptyList();
@@ -62,20 +64,19 @@ public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSeria
         JsonObject jsonObject = json.getAsJsonObject();
         var fields = getFields();
 
-        if(!type.equals(ConfigObj.class)){
-            System.out.println("Provided for deserialization type " + type.getTypeName() + "is not of " + ConfigObj.class.getTypeName() + " type!");
-            //TODO Add LOGGER
-            return null;
-        }
+//        if(!ConfigObj.class.isAssignableFrom(type.getC)){
+//            System.out.println("Provided for deserialization type " + type.getTypeName() + " is not of " + ConfigObj.class.getTypeName() + " type!");
+//            //TODO Add LOGGER
+//            return null;
+//        }
 
-        var c = (Class<?>)type.getClass();
-        Constructor<ConfigObj> cons = null;
+        Constructor<T> cons = null;
         var myId = jsonObject.getAsJsonPrimitive(ID_FIELD_NAME).getAsString();
         try{
-            cons = c.getConstructor(String.class);//obj ID as param. The class MUST have constructor with one string  (for the id) arg!
+            cons = getConstructorForDeserialization();//obj ID as param. The class MUST have constructor with one string  (for the id) arg!
         }
         catch(NoSuchMethodException ex){
-            System.out.println("Constructor for class" + c.getTypeName()
+            System.out.println("Constructor for class" + type.getTypeName()
                     + "not found! Config type has to have a public constructor that accepts one string type!"
                     + " Additional info: " + ex.getMessage()
             );
@@ -84,13 +85,13 @@ public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSeria
             return null;
         }
 
-        Object configObject = null;
+        T configObject = null;
 
         try{
             configObject = cons.newInstance(myId);
         }
         catch(Exception ex){
-            System.out.println("Could not instantiate object of type " + c.getTypeName() + "! The constructor that has" +
+            System.out.println("Could not instantiate object of type " + type.getTypeName() + "! The constructor that has" +
                     "single String type must be public! Additional info: " + ex.getMessage());
             return null;
         }
@@ -98,6 +99,7 @@ public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSeria
 
         for(var field : fields){
             try{
+                //We do not want a type field here, nor the ID one. ID was already assigned a moment ago.
                 if(!field.getType().equals(Type.class) && !field.getName().equals(ID_FIELD_NAME)){//_myID field is serialized already above
                     SerializationHelper.readProperty(field, jsonObject, configObject);
                 }
@@ -112,13 +114,6 @@ public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSeria
             }
         }
 
-        String className = jsonObject.get("type").getAsString();
-        JsonElement jsonElement = jsonObject.get("data");
-        try {
-            Class<?> classType = Class.forName(className);
-            return jsonDeserializationContext.deserialize(jsonElement, classType);
-        } catch (ClassNotFoundException e) {
-            throw new JsonParseException("Unknown element type: " + className, e);
-        }
+        return configObject;
     }
 }
