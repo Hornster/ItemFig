@@ -63,7 +63,10 @@ public class SerializationHelper {
         field.setAccessible(true);
 
         if (fieldType.equals(Character.class)) {
-            field.set(dest, jsonFieldVal.getAsString().charAt(0));
+            var val = jsonFieldVal.getAsString();
+            if(val != null){
+                field.set(dest, val.charAt(0));
+            }
         }
         else if (fieldType.equals(Integer.class)) {
             field.set(dest, jsonFieldVal.getAsInt());

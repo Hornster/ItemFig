@@ -96,11 +96,12 @@ public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSeria
             return null;
         }
 
+        configObject.chkDefaultValues();
 
         for(var field : fields){
             try{
                 //We do not want a type field here, nor the ID one. ID was already assigned a moment ago.
-                if(!field.getType().equals(Type.class) && !field.getName().equals(ID_FIELD_NAME)){//_myID field is serialized already above
+                if(!field.getType().equals(Type.class)){//_myID field is serialized already above
                     SerializationHelper.readProperty(field, jsonObject, configObject);
                 }
             }

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -275,7 +276,7 @@ class SerializationManagerTest {
         var testObjC = TestCases.OBJC_TEST_FULL_CUSTOM_DATA;
         prepareConfig(TestCases.CONFIG_FULL_FIELDS_SINGLE_OBJ, configPath);
 
-        _serializationManager.registerObject(testObjC, new ConfigObjCAdapter());
+        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
 
         _serializationManager.readConfig();
 
@@ -294,16 +295,28 @@ class SerializationManagerTest {
         var testObjC = TestCases.OBJC_TEST_FULL_CUSTOM_DATA;
         prepareConfig(TestCases.CONFIG_FULL_ALL_CHANGED, configPath);
 
+        _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
+        _serializationManager.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapter());
+        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
+
         var idsList = new LinkedList<String>();
         idsList.add(testObjA.getConfigObjId());
         idsList.add(testObjB.getConfigObjId());
         idsList.add(testObjC.getConfigObjId());
 
+        var objMap = new HashMap<String, ConfigObj>();
+        objMap.put(testObjA.getConfigObjId(), testObjA);
+        objMap.put(testObjB.getConfigObjId(), testObjB);
+        objMap.put(testObjC.getConfigObjId(), testObjC);
+
+        _serializationManager.readConfig();
+
         for(var objId : idsList){
             var readObj = (ConfigObj) _serializationManager.getItemConfig(objId);
+            var testObj = objMap.get(objId);
             chkIfFilePresent(configPath);
-            chkIfResultPresent(readObj, testObjC);
-            chkIfResultEqualsSource(readObj, testObjC);
+            chkIfResultPresent(readObj, testObj);
+            chkIfResultEqualsSource(readObj, testObj);
         }
         chkConfigFileContents(TestCases.CONFIG_FULL_ALL_CHANGED, configPath);
     }
@@ -311,12 +324,44 @@ class SerializationManagerTest {
     @Test
     @Order(2)
     void readConfigSingleLacksData() {
+        var configPath = _serializationManager.getConfigPath() + _serializationManager.getConfigFileName();
+        var testObjA = TestCases.OBJA_TEST_PARTIAL_CUSTOM_DATA;
+        testObjA.chkDefaultValues();
 
+        prepareConfig(TestCases.CONFIG_LACKS_FIELDS_SINGLE_OBJ_PRE_SAVE, configPath);
+        _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
+
+        _serializationManager.readConfig();
+
+        var readObjA = (ObjA)_serializationManager.getItemConfig(testObjA.getConfigObjId());
+        chkIfFilePresent(configPath);
+        chkIfResultPresent(readObjA, testObjA);
+        chkIfResultEqualsSource(readObjA, testObjA);
+        chkConfigFileContents(TestCases.CONFIG_LACKS_FIELDS_SINGLE_OBJ_POST_SAVE, configPath);
     }
     @Test
     @Order(2)
     void readConfigMultipleLacksData() {
+        var configPath = _serializationManager.getConfigPath() + _serializationManager.getConfigFileName();
+        var testObjA = TestCases.OBJA_TEST_FULL_CUSTOM_DATA;
+        var testObjB = TestCases.OBJB_TEST_FULL_CUSTOM_DATA;
+        var testObjC = TestCases.OBJC_TEST_FULL_CUSTOM_DATA;
+        prepareConfig(TestCases.CONFIG_FULL_ALL_CHANGED, configPath);
 
+        _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
+        _serializationManager.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapter());
+        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
+
+        var idsList = new LinkedList<String>();
+        idsList.add(testObjA.getConfigObjId());
+        idsList.add(testObjB.getConfigObjId());
+        idsList.add(testObjC.getConfigObjId());
+
+        var objMap = new HashMap<String, ConfigObj>();
+        objMap.put(testObjA.getConfigObjId(), testObjA);
+        objMap.put(testObjB.getConfigObjId(), testObjB);
+        objMap.put(testObjC.getConfigObjId(), testObjC);
+        //TODO use CONFIG_LACKS_FIELDS_FULL_PRE_SAVE_OBJ and CONFIG_FULL_FIELDS_FULL_OBJ_IMPLICIT_CONV here
     }
     @Test
     @Order(2)

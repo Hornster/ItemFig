@@ -1,9 +1,6 @@
 package objects;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import serialization.ConfigObj;
-import serialization.IConfigObj;
 
 public class ObjA extends ConfigObj {
     public Float paramA1;
@@ -18,7 +15,10 @@ public class ObjA extends ConfigObj {
         this.paramA1 = paramA1;
         this.paramA2 = paramA2;
     }
-
+    public ObjA InitializeFieldParamA1(float value){
+        this.paramA1 = value;
+        return this;
+    }
     @Override
     public void chkDefaultValues() {
         if(paramA1 == null){
