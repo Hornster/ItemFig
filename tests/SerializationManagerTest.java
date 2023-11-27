@@ -12,7 +12,6 @@ import serialization.adapters.ConfigObjAdapter;
 import serialization.adapters.ConfigObjBAdapter;
 import serialization.adapters.ConfigObjCAdapter;
 
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -343,10 +342,10 @@ class SerializationManagerTest {
     @Order(2)
     void readConfigMultipleLacksData() {
         var configPath = _serializationManager.getConfigPath() + _serializationManager.getConfigFileName();
-        var testObjA = TestCases.OBJA_TEST_FULL_CUSTOM_DATA;
-        var testObjB = TestCases.OBJB_TEST_FULL_CUSTOM_DATA;
-        var testObjC = TestCases.OBJC_TEST_FULL_CUSTOM_DATA;
-        prepareConfig(TestCases.CONFIG_FULL_ALL_CHANGED, configPath);
+        var testObjA = TestCases.OBJA_TEST_PARTIAL_CUSTOM_DATA;
+        var testObjB = TestCases.OBJB_TEST_PARTIAL_CUSTOM_DATA;
+        var testObjC = TestCases.OBJC_TEST_PARTIAL_CUSTOM_DATA;
+        prepareConfig(TestCases.CONFIG_LACKS_FIELDS_FULL_MULTIPLE_OBJ_PRE_SAVE, configPath);
 
         _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
         _serializationManager.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapter());
@@ -361,6 +360,20 @@ class SerializationManagerTest {
         objMap.put(testObjA.getConfigObjId(), testObjA);
         objMap.put(testObjB.getConfigObjId(), testObjB);
         objMap.put(testObjC.getConfigObjId(), testObjC);
+
+        _serializationManager.readConfig();
+
+        for(var objId : idsList){
+            var readObj = (ConfigObj) _serializationManager.getItemConfig(objId);
+            var testObj = objMap.get(objId);
+
+            testObj.chkDefaultValues();
+
+            chkIfFilePresent(configPath);
+            chkIfResultPresent(readObj, testObj);
+            chkIfResultEqualsSource(readObj, testObj);
+        }
+        chkConfigFileContents(TestCases.CONFIG_LACKS_FIELDS_FULL_MULTIPLE_OBJ_POST_SAVE, configPath);
         //TODO use CONFIG_LACKS_FIELDS_FULL_PRE_SAVE_OBJ and CONFIG_FULL_FIELDS_FULL_OBJ_IMPLICIT_CONV here
     }
     @Test

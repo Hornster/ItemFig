@@ -48,4 +48,9 @@ public class ObjB extends ConfigObj{
                 && paramB2.equals(other.paramB2)
                 && _myID.equals(other._myID);
     }
+
+    public ObjB InitializeFieldParamB1(float v) {
+        paramB1 = v;
+        return this;
+    }
 }

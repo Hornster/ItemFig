@@ -1,12 +1,8 @@
 package objects;
 
 import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import serialization.ConfigObj;
-import serialization.IConfigObj;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 
 public class ObjC extends ObjCC  {
@@ -80,4 +76,8 @@ public class ObjC extends ObjCC  {
                 && id.equals(other.id);
     }
 
+    public ObjC InitializeFieldParamCC1(float v) {
+        paramCC1 = v;
+        return this;
+    }
 }
