@@ -4,8 +4,7 @@ import objects.ObjA;
 import objects.ObjB;
 import objects.ObjC;
 
-import static objects.DefaultVals.OBJB_PARAMB2;
-import static objects.DefaultVals.OBJCC_PARAMC2;
+import static objects.DefaultVals.*;
 
 public class TestCases {
     public final static String OBJA_CUSTOM_ID = "ObjAAleInny";
@@ -80,7 +79,7 @@ public class TestCases {
             "      \"_myID\": \"" + OBJC_CUSTOM_ID + "\",\n" +
             "      \"paramCC1\": " + PARAMC1_CUSTOM_VAL + ",\n" +
             "      \"id\": \"" + OBJC_CUSTOM_ID + "\",\n" +
-            "      \"paramC\": " + PARAMC_CUSTOM_VAL + "\n" +
+            "      \"paramC\": " + OBJC_PARAMC1_DEFAULT + "\n" +
             "    }\n" +
             "  }\n" +
             "}";
@@ -110,19 +109,19 @@ public class TestCases {
             "    \"" + OBJA_CUSTOM_ID + "\": {\n" +
             "      \"_myID\": \"" + OBJA_CUSTOM_ID + "\",\n" +
             "      \"paramA1\": " + PARAMA1_CUSTOM_VAL + ",\n" +
-            "      \"paramA2\": " + PARAMA2_CUSTOM_VAL + "\n" +
+            "      \"paramA2\": " + OBJA_PARAMA2_DEFAULT + "\n" +
             "    },\n" +
             "    \"" + OBJB_CUSTOM_ID + "\": {\n" +
             "      \"_myID\": \"" + OBJB_CUSTOM_ID + "\",\n" +
             "      \"paramB1\": " + PARAMB_CUSTOM_VAL + ",\n" +
-            "      \"paramB2\": \"" + OBJB_PARAMB2 + "\"\n" +
+            "      \"paramB2\": \"" + OBJB_PARAMB2_DEFAULT + "\"\n" +
             "    },\n" +
             "    \"" + OBJC_CUSTOM_ID + "\": {\n" +
             "      \"_myID\": \"" + OBJC_CUSTOM_ID + "\",\n" +
             "      \"paramCC1\": " + PARAMC1_CUSTOM_VAL + ",\n" +
-            "      \"paramCC2\": \"" + OBJCC_PARAMC2 + ",\n" +
+            "      \"paramCC2\": \"" + OBJCC_PARAMC2_DEFAULT + "\",\n" +
             "      \"id\": \"" + OBJC_CUSTOM_ID + "\",\n" +
-            "      \"paramC\": " + PARAMC_CUSTOM_VAL + "\n" +
+            "      \"paramC\": " + OBJC_PARAMC1_DEFAULT + "\n" +
             "    }\n" +
             "  }\n" +
             "}";
@@ -151,7 +150,7 @@ public class TestCases {
             "    \"" + OBJA_CUSTOM_ID + "\": {\n" +
             "      \"_myID\": \"" + OBJA_CUSTOM_ID + "\",\n" +
             "      \"paramA1\": " + PARAMA1_CUSTOM_VAL + ",\n" +
-            "      \"paramA2\": " + PARAMA2_CUSTOM_VAL + "\n" +
+            "      \"paramA2\": " + OBJA_PARAMA2_DEFAULT + "\n" +
             "    }\n" +
             "  }\n" +
             "}";

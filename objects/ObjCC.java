@@ -20,10 +20,10 @@ public class ObjCC extends ConfigObj {
     @Override
     public void chkDefaultValues() {
         if(paramCC1 == null){
-            paramCC1 = DefaultVals.OBJCC_PARAMC1;
+            paramCC1 = DefaultVals.OBJCC_PARAMC1_DEFAULT;
         }
         if(paramCC2 == null){
-            paramCC2 = DefaultVals.OBJCC_PARAMC2;
+            paramCC2 = DefaultVals.OBJCC_PARAMC2_DEFAULT;
         }
     }
 }

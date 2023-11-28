@@ -1,9 +1,6 @@
 package objects;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import serialization.ConfigObj;
-import serialization.IConfigObj;
 
 public class ObjB extends ConfigObj{
     public Float paramB1;
@@ -24,10 +21,10 @@ public class ObjB extends ConfigObj{
     public void chkDefaultValues() {
 
         if(paramB1 == null){
-            paramB1 = DefaultVals.OBJB_PARAMB1;
+            paramB1 = DefaultVals.OBJB_PARAMB1_DEFAULT;
         }
         if(paramB2 == null){
-            paramB2 = DefaultVals.OBJB_PARAMB2;
+            paramB2 = DefaultVals.OBJB_PARAMB2_DEFAULT;
         }
     }
     @Override

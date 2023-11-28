@@ -26,13 +26,13 @@ public class ObjC extends ObjCC  {
     @Override
     public void chkDefaultValues() {
         if(paramC == null){
-            paramC = DefaultVals.OBJC_PARAMC1;
+            paramC = DefaultVals.OBJC_PARAMC1_DEFAULT;
         }
         if(paramCC1 == null){
-            paramCC1 = DefaultVals.OBJCC_PARAMC1;
+            paramCC1 = DefaultVals.OBJCC_PARAMC1_DEFAULT;
         }
         if(paramCC2 == null){
-            paramCC2 = DefaultVals.OBJCC_PARAMC2;
+            paramCC2 = DefaultVals.OBJCC_PARAMC2_DEFAULT;
         }
     }
 

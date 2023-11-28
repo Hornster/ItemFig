@@ -173,6 +173,13 @@ public class SerializationManager {
         }
 
         var jsonRegisteredObjectsSet = jsonRegisteredObjects.asMap();
+
+        if(jsonRegisteredObjectsSet.size() == 0){
+            reportDeserializationWarning(EMPTY_CONFIG_READ_WARN);
+            return; //Nothing to do here, there is no config in the file. We will read default data and recreate
+            //the config file with it.
+        }
+
         var keys = jsonRegisteredObjectsSet.keySet();
 
         for (var key : keys) {
@@ -204,7 +211,7 @@ public class SerializationManager {
      */
     private void recreateConfig(Gson gson) {
         chkDefaultValues();
-        var path = Paths.get(getConfigPath());
+        var path = Paths.get(getConfigPath()+getConfigFileName());
         try {
             Files.delete(path);
         } catch (NoSuchFileException ex) {

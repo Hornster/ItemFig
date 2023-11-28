@@ -22,10 +22,10 @@ public class ObjA extends ConfigObj {
     @Override
     public void chkDefaultValues() {
         if(paramA1 == null){
-            paramA1 = DefaultVals.OBJA_PARAMA1;
+            paramA1 = DefaultVals.OBJA_PARAMA1_DEFAULT;
         }
         if(paramA2 == null){
-            paramA2 = DefaultVals.OBJA_PARAMA2;
+            paramA2 = DefaultVals.OBJA_PARAMA2_DEFAULT;
         }
     }
 
