@@ -49,19 +49,38 @@ public class TestCases {
             "    }\n" +
             "  }\n" +
             "}";
-    public final static String CONFIG_FULL_FIELDS_LACKS_ONE_OBJ = "{\n" +
+    public final static String CONFIG_FULL_FIELDS_LACKS_ONE_OBJ_PRE_SAVE = "{\n" +
             "  \"registeredObjects\": {\n" +
             "    \"" + OBJA_CUSTOM_ID + "\": {\n" +
             "      \"_myID\": \"" + OBJA_CUSTOM_ID + "\",\n" +
             "      \"paramA1\": " + PARAMA1_CUSTOM_VAL + ",\n" +
             "      \"paramA2\": " + PARAMA2_CUSTOM_VAL + "\n" +
             "    },\n" +
+            "    \"" + OBJB_CUSTOM_ID + "\": {\n" +
+            "      \"_myID\": \"" + OBJB_CUSTOM_ID + "\",\n" +
+            "      \"paramB1\": " + PARAMB_CUSTOM_VAL + ",\n" +
+            "      \"paramB2\": \"" + PARAMB2_CUSTOM_VAL + "\"\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+    public final static String CONFIG_FULL_FIELDS_LACKS_ONE_OBJ_POST_SAVE = "{\n" +
+            "  \"registeredObjects\": {\n" +
+            "    \"" + OBJA_CUSTOM_ID + "\": {\n" +
+            "      \"_myID\": \"" + OBJA_CUSTOM_ID + "\",\n" +
+            "      \"paramA1\": " + PARAMA1_CUSTOM_VAL + ",\n" +
+            "      \"paramA2\": " + PARAMA2_CUSTOM_VAL + "\n" +
+            "    },\n" +
+            "    \"" + OBJB_CUSTOM_ID + "\": {\n" +
+            "      \"_myID\": \"" + OBJB_CUSTOM_ID + "\",\n" +
+            "      \"paramB1\": " + PARAMB_CUSTOM_VAL + ",\n" +
+            "      \"paramB2\": \"" + PARAMB2_CUSTOM_VAL + "\"\n" +
+            "    },\n" +
             "    \"" + OBJC_CUSTOM_ID + "\": {\n" +
             "      \"_myID\": \"" + OBJC_CUSTOM_ID + "\",\n" +
-            "      \"paramCC1\": " + PARAMC1_CUSTOM_VAL + ",\n" +
-            "      \"paramCC2\": \"" + PARAMC2_CUSTOM_VAL + "\",\n" +
+            "      \"paramCC1\": " + OBJCC_PARAMC1_DEFAULT + ",\n" +
+            "      \"paramCC2\": \"" + OBJCC_PARAMC2_DEFAULT + "\",\n" +
             "      \"id\": \"" + OBJC_CUSTOM_ID + "\",\n" +
-            "      \"paramC\": " + PARAMC_CUSTOM_VAL + "\n" +
+            "      \"paramC\": " + OBJC_PARAMC1_DEFAULT + "\n" +
             "    }\n" +
             "  }\n" +
             "}";

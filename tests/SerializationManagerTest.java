@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 import static org.junit.jupiter.api.Assertions.fail;
 import static serialization.Constants.EMPTY_CONFIG_READ_WARN;
 import static serialization.Constants.EMPTY_CONFIG_SAVE_WARN;
+import static tests.TestCases.OBJC_CUSTOM_ID;
 
 
 class SerializationManagerTest {
@@ -298,15 +299,9 @@ class SerializationManagerTest {
         _serializationManager.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapter());
         _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
 
-        var idsList = new LinkedList<String>();
-        idsList.add(testObjA.getConfigObjId());
-        idsList.add(testObjB.getConfigObjId());
-        idsList.add(testObjC.getConfigObjId());
+        var idsList = getTestObjIds(testObjA, testObjB, testObjC);
 
-        var objMap = new HashMap<String, ConfigObj>();
-        objMap.put(testObjA.getConfigObjId(), testObjA);
-        objMap.put(testObjB.getConfigObjId(), testObjB);
-        objMap.put(testObjC.getConfigObjId(), testObjC);
+        HashMap<String, ConfigObj> objMap = getTestObjectMap(testObjA, testObjB, testObjC);
 
         _serializationManager.readConfig();
 
@@ -318,6 +313,14 @@ class SerializationManagerTest {
             chkIfResultEqualsSource(readObj, testObj);
         }
         chkConfigFileContents(TestCases.CONFIG_FULL_ALL_CHANGED, configPath);
+    }
+
+    private static LinkedList<String> getTestObjIds(ObjA testObjA, ObjB testObjB, ObjC testObjC) {
+        var idsList = new LinkedList<String>();
+        idsList.add(testObjA.getConfigObjId());
+        idsList.add(testObjB.getConfigObjId());
+        idsList.add(testObjC.getConfigObjId());
+        return idsList;
     }
 
     @Test
@@ -351,15 +354,9 @@ class SerializationManagerTest {
         _serializationManager.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapter());
         _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
 
-        var idsList = new LinkedList<String>();
-        idsList.add(testObjA.getConfigObjId());
-        idsList.add(testObjB.getConfigObjId());
-        idsList.add(testObjC.getConfigObjId());
+        var idsList = getTestObjIds(testObjA, testObjB, testObjC);
 
-        var objMap = new HashMap<String, ConfigObj>();
-        objMap.put(testObjA.getConfigObjId(), testObjA);
-        objMap.put(testObjB.getConfigObjId(), testObjB);
-        objMap.put(testObjC.getConfigObjId(), testObjC);
+        var objMap = getTestObjectMap(testObjA, testObjB, testObjC);
 
         _serializationManager.readConfig();
 
@@ -376,17 +373,48 @@ class SerializationManagerTest {
         chkConfigFileContents(TestCases.CONFIG_LACKS_FIELDS_FULL_MULTIPLE_OBJ_POST_SAVE, configPath);
         //TODO use CONFIG_LACKS_FIELDS_FULL_PRE_SAVE_OBJ and CONFIG_FULL_FIELDS_FULL_OBJ_IMPLICIT_CONV here
     }
+
+    private static HashMap<String, ConfigObj> getTestObjectMap(ObjA testObjA, ObjB testObjB, ObjC testObjC) {
+        var objMap = new HashMap<String, ConfigObj>();
+        objMap.put(testObjA.getConfigObjId(), testObjA);
+        objMap.put(testObjB.getConfigObjId(), testObjB);
+        objMap.put(testObjC.getConfigObjId(), testObjC);
+        return objMap;
+    }
+
     @Test
     @Order(2)
     void readConfigMultipleLacksObject() {
+        var configPath = _serializationManager.getConfigPath() + _serializationManager.getConfigFileName();
+        var testObjA = TestCases.OBJA_TEST_FULL_CUSTOM_DATA;
+        var testObjB = TestCases.OBJB_TEST_FULL_CUSTOM_DATA;
+        var testObjC = new ObjC(OBJC_CUSTOM_ID);
 
+        prepareConfig(TestCases.CONFIG_FULL_FIELDS_LACKS_ONE_OBJ_PRE_SAVE, configPath);
+
+        _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
+        _serializationManager.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapter());
+        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
+
+        var idsList = getTestObjIds(testObjA, testObjB, testObjC);
+
+        var objMap = getTestObjectMap(testObjA, testObjB, testObjC);
+
+        _serializationManager.readConfig();
+
+        for(var objId : idsList){
+            var readObj = (ConfigObj) _serializationManager.getItemConfig(objId);
+            var testObj = objMap.get(objId);
+
+            testObj.chkDefaultValues();
+
+            chkIfFilePresent(configPath);
+            chkIfResultPresent(readObj, testObj);
+            chkIfResultEqualsSource(readObj, testObj);
+        }
+        chkConfigFileContents(TestCases.CONFIG_FULL_FIELDS_LACKS_ONE_OBJ_POST_SAVE, configPath);
     }
 
-    @Test
-    @Order(2)
-    void readConfigMultipleLacksObjectOK() {
-
-    }
     @Test
     void getItemConfigSingleRegisterOK() {
         var newObjectA = new ObjA(OBJ_A_NAME);
