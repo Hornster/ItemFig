@@ -4,10 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import objects.ObjC;
 import org.testng.internal.collections.Pair;
-import serialization.adapters.ConfigObjAdapter;
-import serialization.adapters.ConfigObjCAdapter;
+import serialization.config.ConfigObjAdapter;
+import serialization.config.ConfigObj;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -22,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static serialization.Constants.EMPTY_CONFIG_READ_WARN;
-import static serialization.Constants.EMPTY_CONFIG_SAVE_WARN;
+import static serialization.common.constants.Constants.EMPTY_CONFIG_READ_WARN;
+import static serialization.common.constants.Constants.EMPTY_CONFIG_SAVE_WARN;
 
 public class SerializationManager {
     private final String _registeredObjectsFieldName = "registeredObjects";

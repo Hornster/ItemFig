@@ -1,6 +1,6 @@
 package objects;
 
-import serialization.ConfigObj;
+import serialization.config.ConfigObj;
 
 import java.lang.reflect.Type;
 

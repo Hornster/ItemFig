@@ -1,12 +1,13 @@
-package serialization.adapters;
+package tests.adapters;
 
 import objects.ObjC;
+import serialization.config.ConfigObjAdapter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class ConfigObjCAdapter extends ConfigObjAdapter<ObjC>{
+public class ConfigObjCAdapter extends ConfigObjAdapter<ObjC> {
 
     @Override
     protected List<Field> getFields() {

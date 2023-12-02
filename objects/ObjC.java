@@ -1,7 +1,7 @@
 package objects;
 
 import com.google.gson.*;
-import serialization.ConfigObj;
+import serialization.config.ConfigObj;
 
 import java.lang.reflect.Type;
 

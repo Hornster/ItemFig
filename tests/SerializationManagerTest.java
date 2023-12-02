@@ -5,12 +5,12 @@ import objects.ObjB;
 import objects.ObjC;
 import org.junit.jupiter.api.*;
 import org.testng.internal.collections.Pair;
-import serialization.ConfigObj;
+import serialization.config.ConfigObj;
 import serialization.SerializationManager;
-import serialization.adapters.ConfigObjAAdapter;
-import serialization.adapters.ConfigObjAdapter;
-import serialization.adapters.ConfigObjBAdapter;
-import serialization.adapters.ConfigObjCAdapter;
+import tests.adapters.ConfigObjAAdapter;
+import serialization.config.ConfigObjAdapter;
+import tests.adapters.ConfigObjBAdapter;
+import tests.adapters.ConfigObjCAdapter;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,8 +24,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.fail;
-import static serialization.Constants.EMPTY_CONFIG_READ_WARN;
-import static serialization.Constants.EMPTY_CONFIG_SAVE_WARN;
+import static serialization.common.constants.Constants.EMPTY_CONFIG_READ_WARN;
+import static serialization.common.constants.Constants.EMPTY_CONFIG_SAVE_WARN;
 import static tests.TestCases.OBJC_CUSTOM_ID;
 
 

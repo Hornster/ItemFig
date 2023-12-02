@@ -1,7 +1,6 @@
 package objects;
 
-import serialization.ConfigObj;
-import serialization.IConfigObj;
+import serialization.config.ConfigObj;
 
 import java.util.LinkedList;
 

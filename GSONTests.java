@@ -1,7 +1,6 @@
 import com.google.gson.Gson;
 import objects.*;
-import serialization.ConfigObj;
-import serialization.IConfigObj;
+import serialization.config.ConfigObj;
 import serialization.SerializationManager;
 
 import java.io.*;

@@ -1,12 +1,9 @@
-package serialization.adapters;
+package serialization.config;
 
 import com.google.gson.*;
-import objects.ObjC;
-import serialization.ConfigObj;
-import serialization.Constants;
+import serialization.config.ConfigObj;
 import serialization.SerializationHelper;
 
-import java.io.ObjectInputFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -15,7 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static serialization.Constants.ID_FIELD_NAME;
+import static serialization.common.constants.Constants.ID_FIELD_NAME;
 
 public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSerializer<T>, JsonDeserializer<T> {
     @Override

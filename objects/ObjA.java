@@ -1,6 +1,6 @@
 package objects;
 
-import serialization.ConfigObj;
+import serialization.config.ConfigObj;
 
 public class ObjA extends ConfigObj {
     public Float paramA1;

@@ -1,7 +1,7 @@
-package serialization.adapters;
+package tests.adapters;
 
 import objects.ObjB;
-import objects.ObjC;
+import serialization.config.ConfigObjAdapter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
