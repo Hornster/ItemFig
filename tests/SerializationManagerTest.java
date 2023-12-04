@@ -90,7 +90,6 @@ class SerializationManagerTest {
             fail("Config file was not created/stopped existing unrightfully!");
         }
     }
-
     private static void chkConfigFileContents(String originalContents, String configPath){
         try{
             var filePath = Path.of(configPath);
@@ -288,6 +287,38 @@ class SerializationManagerTest {
     }
     @Test
     @Order(2)
+    void sameObjTypeFullFields(){
+        var configPath = _serializationManager.getConfigPath() + _serializationManager.getConfigFileName();
+        var testObjC = TestCases.OBJC_TEST_FULL_CUSTOM_DATA;
+        var testObjC2 = TestCases.OBJC_TEST_FULL_CUSTOM_DATA2;
+        prepareConfig(TestCases.CONFIG_SAME_OBJC_TYPES, configPath);
+
+        var objCAdapter = new ConfigObjCAdapter();
+
+        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), objCAdapter);
+        _serializationManager.registerObject(new ObjC(testObjC2.getConfigObjId()), objCAdapter);
+
+        var idsList = new LinkedList<String>();
+        idsList.add(testObjC.getConfigObjId());
+        idsList.add(testObjC2.getConfigObjId());
+
+        var objMap = new HashMap<String, ConfigObj>();
+        objMap.put(testObjC.getConfigObjId(), testObjC);
+        objMap.put(testObjC2.getConfigObjId(), testObjC2);
+
+        _serializationManager.readConfig();
+
+        for(var objId : idsList){
+            var readObj = (ConfigObj) _serializationManager.getItemConfig(objId);
+            var testObj = objMap.get(objId);
+            chkIfFilePresent(configPath);
+            chkIfResultPresent(readObj, testObj);
+            chkIfResultEqualsSource(readObj, testObj);
+        }
+        chkConfigFileContents(TestCases.CONFIG_SAME_OBJC_TYPES, configPath);
+    }
+    @Test
+    @Order(2)
     void readConfigMultiple() {
         var configPath = _serializationManager.getConfigPath() + _serializationManager.getConfigFileName();
         var testObjA = TestCases.OBJA_TEST_FULL_CUSTOM_DATA;
@@ -301,7 +332,7 @@ class SerializationManagerTest {
 
         var idsList = getTestObjIds(testObjA, testObjB, testObjC);
 
-        HashMap<String, ConfigObj> objMap = getTestObjectMap(testObjA, testObjB, testObjC);
+        var objMap = getTestObjectMap(testObjA, testObjB, testObjC);
 
         _serializationManager.readConfig();
 
