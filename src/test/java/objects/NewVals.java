@@ -1,4 +1,4 @@
-package net.crazedaerialcable.itemfig.objects;
+package objects;
 
 public class NewVals {
     public static final float OBJA_PARAMA1 = 5;

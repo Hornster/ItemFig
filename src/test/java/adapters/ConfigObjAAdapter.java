@@ -1,7 +1,7 @@
-package tests.adapters;
+package adapters;
 
+import net.crazedaerialcable.itemfig.serialization.config.ConfigObjAdapter;
 import objects.ObjA;
-import serialization.config.ConfigObjAdapter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

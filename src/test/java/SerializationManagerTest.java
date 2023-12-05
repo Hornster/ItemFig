@@ -1,18 +1,15 @@
-package tests;
-
-
-import net.crazedaerialcable.itemfig.objects.ObjA;
-import net.crazedaerialcable.itemfig.objects.ObjB;
-import net.crazedaerialcable.itemfig.objects.ObjC;
+import objects.ObjA;
+import objects.ObjB;
+import objects.ObjC;
+import net.crazedaerialcable.itemfig.serialization.SerializationManager;
+import net.crazedaerialcable.itemfig.serialization.config.ConfigObj;
+import net.crazedaerialcable.itemfig.serialization.config.ConfigObjAdapter;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.*;
-import serialization.config.ConfigObj;
-import serialization.SerializationManager;
-import tests.adapters.ConfigObjAAdapter;
-import serialization.config.ConfigObjAdapter;
-import tests.adapters.ConfigObjBAdapter;
-import tests.adapters.ConfigObjCAdapter;
+import adapters.ConfigObjAAdapter;
+import adapters.ConfigObjBAdapter;
+import adapters.ConfigObjCAdapter;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,13 +22,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+import static net.crazedaerialcable.itemfig.serialization.common.constants.Constants.EMPTY_CONFIG_READ_WARN;
+import static net.crazedaerialcable.itemfig.serialization.common.constants.Constants.EMPTY_CONFIG_SAVE_WARN;
 import static org.junit.jupiter.api.Assertions.fail;
-import static serialization.common.constants.Constants.EMPTY_CONFIG_READ_WARN;
-import static serialization.common.constants.Constants.EMPTY_CONFIG_SAVE_WARN;
-import static tests.TestCases.OBJC_CUSTOM_ID;
 
 
-class SerializationManagerTest {
+public class SerializationManagerTest {
     private final static String OBJ_A_NAME = "ObjA";
     private final static String OBJ_B_NAME = "ObjB";
     private final static String OBJ_C_NAME = "ObjC";
@@ -119,7 +115,7 @@ class SerializationManagerTest {
 
     @Test
     @Order(1)
-    void registerObjectOK() {
+    public void registerObjectOK() {
         var newObjectA = new ObjA(OBJ_A_NAME);
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
@@ -139,7 +135,7 @@ class SerializationManagerTest {
 
     @Test
     @Order(1)
-    void registerObjectsOK() {
+    public void registerObjectsOK() {
         var list = createObjListOK();
 
         try{
@@ -416,12 +412,12 @@ class SerializationManagerTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     void readConfigMultipleLacksObject() {
         var configPath = _serializationManager.getConfigPath() + _serializationManager.getConfigFileName();
         var testObjA = TestCases.OBJA_TEST_FULL_CUSTOM_DATA;
         var testObjB = TestCases.OBJB_TEST_FULL_CUSTOM_DATA;
-        var testObjC = new ObjC(OBJC_CUSTOM_ID);
+        var testObjC = new ObjC(TestCases.OBJC_CUSTOM_ID);
 
         prepareConfig(TestCases.CONFIG_FULL_FIELDS_LACKS_ONE_OBJ_PRE_SAVE, configPath);
 

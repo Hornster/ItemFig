@@ -1,4 +1,4 @@
-package net.crazedaerialcable.itemfig.objects;
+package objects;
 
 
 import net.crazedaerialcable.itemfig.serialization.config.ConfigObj;

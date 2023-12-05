@@ -1,4 +1,4 @@
-package net.crazedaerialcable.itemfig.objects;
+package objects;
 
 import com.google.gson.*;
 import net.crazedaerialcable.itemfig.serialization.config.ConfigObj;

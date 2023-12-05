@@ -1,10 +1,8 @@
-package tests;
+import objects.ObjA;
+import objects.ObjB;
+import objects.ObjC;
 
-import net.crazedaerialcable.itemfig.objects.ObjA;
-import net.crazedaerialcable.itemfig.objects.ObjB;
-import net.crazedaerialcable.itemfig.objects.ObjC;
-
-import static net.crazedaerialcable.itemfig.objects.DefaultVals.*;
+import static objects.DefaultVals.*;
 
 public class TestCases {
     public final static String OBJA_CUSTOM_ID = "ObjAAleInny";
