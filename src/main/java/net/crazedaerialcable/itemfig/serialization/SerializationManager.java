@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.crazedaerialcable.itemfig.ItemFig;
 import net.crazedaerialcable.itemfig.serialization.config.ConfigObj;
 import net.crazedaerialcable.itemfig.serialization.config.ConfigObjAdapter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,10 +32,10 @@ public class SerializationManager {
      * The key is preferably the ID used in mod for given item, but can be something else as
      * long as it is unique, obviously..
      */
-    private Map<String, ConfigObj> _registeredObjects = new LinkedHashMap<>();
-    private Map<Type, ConfigObjAdapter<?>> _registeredObjectsAdapters = new HashMap<>();
+    private final Map<String, ConfigObj> _registeredObjects = new LinkedHashMap<>();
+    private final Map<Type, ConfigObjAdapter<?>> _registeredObjectsAdapters = new HashMap<>();
     private final String _jsonPath = System.getProperty("user.dir") + File.separator + "config" + File.separator;
-    private String _jsonFileName = "mod-config";
+    private String _jsonFileName = "itemfig-mod-config";
     private final String _jsonExtension = ".json";
 
     private Consumer<String> _configSaveErrHandler;
@@ -49,15 +50,19 @@ public class SerializationManager {
     private boolean _jsonDeserializationError = false;
     /**
      * Force saving of the config no matter if any deserialization errors occurred.
+     * DANGER OF LOSING DATA IF SET TO TRUE!
+     * By default, false.
      */
     public boolean _forceConfigSave = false;
     /**
      * Update the config with default values and new items if any were added.
      * Will not work if deserialization errors occurred.
+     * By default, true.
      */
     public boolean _updateConfigSave = true;
     /**
      * Wipe current config clean and recreate new one from default values.
+     * By default, false.
      */
     public boolean _recreateConfig = false;
 
@@ -123,7 +128,7 @@ public class SerializationManager {
         if(_configReadErrHandler != null){
             _configReadErrHandler.accept(msg);
         }
-        //TODO report to LOGGER here
+        ItemFig.LOGGER.error(msg);
     }
 
     /**
@@ -135,20 +140,20 @@ public class SerializationManager {
         if(_configReadWarnHandler != null){
             _configReadWarnHandler.accept(msg);
         }
-        //TODO report to LOGGER here
+        ItemFig.LOGGER.warn(msg);
     }
 
     private void reportSerializationWarning(String msg){
         if(_configSaveWarnHandler != null){
             _configSaveWarnHandler.accept(msg);
         }
-        //TODO report to LOGGER here
+        ItemFig.LOGGER.warn(msg);
     }
     private void reportSerializationError(String msg){
         if(_configSaveErrHandler != null){
             _configSaveErrHandler.accept(msg);
         }
-        //TODO report to LOGGER here
+        ItemFig.LOGGER.error(msg);
     }
 
     private void chkIfExtensionProvided() {

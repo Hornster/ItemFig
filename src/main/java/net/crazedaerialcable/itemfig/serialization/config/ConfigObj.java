@@ -4,13 +4,13 @@ import com.google.gson.*;
 
 import java.lang.reflect.Type;
 
-public abstract class ConfigObj {//} implements IConfigObj {
+public abstract class ConfigObj {
     protected Type _myType;
     protected String _myID;
     /**
      * @param myType needed for auto deserialization.
      * @param myID will be used to discern this config object from others during deserialization.
-     * It MUST be unique.*/
+     * It MUST be unique. Just like in MC itself.*/
     public ConfigObj(Type myType, String myID){
         _myType = myType;
         _myID = myID;

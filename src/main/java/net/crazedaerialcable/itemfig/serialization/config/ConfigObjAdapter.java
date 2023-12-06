@@ -1,6 +1,7 @@
 package net.crazedaerialcable.itemfig.serialization.config;
 
 import com.google.gson.*;
+import net.crazedaerialcable.itemfig.ItemFig;
 import net.crazedaerialcable.itemfig.serialization.SerializationHelper;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -27,12 +28,13 @@ public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSeria
                 }
             }
             catch(IllegalAccessException ex){
-                System.out.println("Could not access the field " + field.getName() + " during serialization! " + ex.getMessage());
-                //TODO add mod logger!
+                var errMsg = "Could not access the field " + field.getName() + " during serialization! " + ex.getMessage();
+                System.out.println(errMsg);
+                ItemFig.LOGGER.error(errMsg);
             }
             catch (Exception ex){
                 System.out.println(ex.getMessage());
-                //TODO add mod logger!
+                ItemFig.LOGGER.error(ex.getMessage());
             }
         }
         return jsonObject;
@@ -60,24 +62,18 @@ public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSeria
         JsonObject jsonObject = json.getAsJsonObject();
         var fields = getFields();
 
-//        if(!ConfigObj.class.isAssignableFrom(type.getC)){
-//            System.out.println("Provided for deserialization type " + type.getTypeName() + " is not of " + ConfigObj.class.getTypeName() + " type!");
-//            //TODO Add LOGGER
-//            return null;
-//        }
-
         Constructor<T> cons = null;
         var myId = jsonObject.getAsJsonPrimitive(ID_FIELD_NAME).getAsString();
         try{
             cons = getConstructorForDeserialization();//obj ID as param. The class MUST have constructor with one string  (for the id) arg!
         }
         catch(NoSuchMethodException ex){
-            System.out.println("Constructor for class" + type.getTypeName()
+            var errMsg = "Constructor for class" + type.getTypeName()
                     + "not found! Config type has to have a public constructor that accepts one string type!"
-                    + " Additional info: " + ex.getMessage()
-            );
+                    + " Additional info: " + ex.getMessage();
+            System.out.println(errMsg);
 
-            //TODO Add LOGGER
+            ItemFig.LOGGER.error(errMsg);
             return null;
         }
 
@@ -87,8 +83,10 @@ public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSeria
             configObject = cons.newInstance(myId);
         }
         catch(Exception ex){
-            System.out.println("Could not instantiate object of type " + type.getTypeName() + "! The constructor that has" +
-                    "single String type must be public! Additional info: " + ex.getMessage());
+            var errMsg = "Could not instantiate object of type " + type.getTypeName() + "! The constructor that has" +
+                    "single String type must be public! Additional info: " + ex.getMessage();
+            System.out.println(errMsg);
+            ItemFig.LOGGER.error(errMsg);
             return null;
         }
 
@@ -102,12 +100,13 @@ public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSeria
                 }
             }
             catch(IllegalAccessException ex){
-                System.out.println("Could not access the field " + field.getName() + " during serialization! " + ex.getMessage());
-                //TODO add mod logger!
+                var errMsg = "Could not access the field " + field.getName() + " during serialization! " + ex.getMessage();
+                System.out.println(errMsg);
+                ItemFig.LOGGER.error(errMsg);
             }
             catch (Exception ex){
                 System.out.println(ex.getMessage());
-                //TODO add mod logger!
+                ItemFig.LOGGER.error(ex.getMessage());
             }
         }
 
