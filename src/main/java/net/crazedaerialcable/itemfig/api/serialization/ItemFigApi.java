@@ -54,25 +54,49 @@ public class ItemFigApi{
     public static void setRecreateConfig(boolean shouldRecreateConfig){
         _serializationManager._recreateConfig = shouldRecreateConfig;
     }
-
+    /**
+     * Registers a config object for reading and saving. The param type of the adapter
+     * has to be the same as the one of registered object.*/
     public static void registerObject(ConfigObj object, ConfigObjAdapter<?> adapter) {
         _serializationManager.registerObject(object, adapter);
     }
-
+    /**
+     * Registers multiple objects utilizing a list of pairs. The param type of the adapters
+     * have to be the same as the ones of registered objects'.*/
     public static void registerObjects(List<Pair<ConfigObj, ConfigObjAdapter<?>>> objects){
         _serializationManager.registerObjects(objects);
     }
-
+    /**
+     * If logging of a serialization (saving) error is not enough, you can
+     * attach a handler here. Errors mean something went wrong and
+     * something probably failed to be saved.
+     * @param handler The string argument will contain the error message.*/
     public static void registerSaveErrorHandler(Consumer<String> handler) {
         _serializationManager.registerSaveErrorHandler(handler);
     }
+    /**
+     * If logging of a serialization (saving) warning is not enough, you can
+     * attach a handler here. Warnings are reported when something probably unwanted
+     * happens, but does not cause errors or exceptions. An example would be a warning
+     * about an empty file saving (no registered objects).
+     * @param handler The string argument will contain the error message.*/
     public static void registerSaveWarningHandler(Consumer<String> handler) {
         _serializationManager.registerSaveWarningHandler(handler);
     }
-
+    /**
+     * If logging of a deserialization (loading) error is not enough, you can
+     * attach a handler here. Errors mean something went wrong and
+     * something probably failed to be loaded.
+     * @param handler The string argument will contain the error message.*/
     public static void registerReadErrorHandler(Consumer<String> handler) {
         _serializationManager.registerReadErrorHandler(handler);
     }
+    /**
+     * If logging of a deserialization (load) warning is not enough, you can
+     * attach a handler here. Warnings are reported when something probably unwanted
+     * happens, but does not cause errors or exceptions. An example would be a warning
+     * about an empty file being read (no saved objects).
+     * @param handler The string argument will contain the error message.*/
     public static void registerReadWarningHandler(Consumer<String> handler) {
         _serializationManager.registerReadWarningHandler(handler);
     }
@@ -83,9 +107,15 @@ public class ItemFigApi{
     public static void setConfigFileName(String name) {
         _serializationManager.setConfigFileName(name);
     }
+    /**
+     * Returns the name of the config file, with .json extension attached even if it was
+     * not provided earlier upon changing the config name.*/
     public static String getConfigFileName(){
         return _serializationManager.getConfigFileName();
     }
+    /**
+     * Returns the absolute path to the folder where the config will be saved, without
+     * the name of the config itself.*/
     public static String getConfigPath(){
         return _serializationManager.getConfigPath();
     }
