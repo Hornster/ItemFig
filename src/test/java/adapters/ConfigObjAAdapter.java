@@ -1,6 +1,6 @@
 package adapters;
 
-import net.crazedaerialcable.itemfig.serialization.config.ConfigObjAdapter;
+import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
 import objects.ObjA;
 
 import java.lang.reflect.Constructor;

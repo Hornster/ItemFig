@@ -1,12 +1,13 @@
-package net.crazedaerialcable.itemfig.serialization;
+package io.github.hornster.itemfig.serialization;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.crazedaerialcable.itemfig.ItemFig;
-import net.crazedaerialcable.itemfig.serialization.config.ConfigObj;
-import net.crazedaerialcable.itemfig.serialization.config.ConfigObjAdapter;
+import io.github.hornster.itemfig.ItemFig;
+import io.github.hornster.itemfig.serialization.common.constants.Constants;
+import io.github.hornster.itemfig.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
@@ -21,9 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import static net.crazedaerialcable.itemfig.serialization.common.constants.Constants.EMPTY_CONFIG_READ_WARN;
-import static net.crazedaerialcable.itemfig.serialization.common.constants.Constants.EMPTY_CONFIG_SAVE_WARN;
 
 public class SerializationManager {
     private final String _registeredObjectsFieldName = "registeredObjects";
@@ -171,7 +169,7 @@ public class SerializationManager {
         var jsonRegisteredObjects = jsonConfigObj.getAsJsonObject(_registeredObjectsFieldName);
 
         if (jsonRegisteredObjects == null) {
-            reportDeserializationWarning(EMPTY_CONFIG_READ_WARN);
+            reportDeserializationWarning(Constants.EMPTY_CONFIG_READ_WARN);
             return; //Nothing to do here, there is no config in the file. We will read default data and recreate
             //the config file with it.
         }
@@ -179,7 +177,7 @@ public class SerializationManager {
         var jsonRegisteredObjectsSet = jsonRegisteredObjects.asMap();
 
         if(jsonRegisteredObjectsSet.size() == 0){
-            reportDeserializationWarning(EMPTY_CONFIG_READ_WARN);
+            reportDeserializationWarning(Constants.EMPTY_CONFIG_READ_WARN);
             return; //Nothing to do here, there is no config in the file. We will read default data and recreate
             //the config file with it.
         }
@@ -337,7 +335,7 @@ public class SerializationManager {
         var jsonData = gson.toJson(rootJsonObj);
 
         if(_registeredObjects.size() == 0){
-            reportSerializationWarning(EMPTY_CONFIG_SAVE_WARN);
+            reportSerializationWarning(Constants.EMPTY_CONFIG_SAVE_WARN);
         }
 
         var configPath = getConfigPath();

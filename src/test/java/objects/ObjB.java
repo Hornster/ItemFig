@@ -1,7 +1,7 @@
 package objects;
 
 
-import net.crazedaerialcable.itemfig.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.serialization.config.ConfigObj;
 
 public class ObjB extends ConfigObj {
     public Float paramB1;

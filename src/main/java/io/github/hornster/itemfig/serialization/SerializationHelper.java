@@ -1,4 +1,4 @@
-package net.crazedaerialcable.itemfig.serialization;
+package io.github.hornster.itemfig.serialization;
 
 import com.google.gson.JsonObject;
 

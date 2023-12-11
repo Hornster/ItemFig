@@ -1,8 +1,8 @@
-package net.crazedaerialcable.itemfig.serialization.config;
+package io.github.hornster.itemfig.serialization.config;
 
 import com.google.gson.*;
-import net.crazedaerialcable.itemfig.ItemFig;
-import net.crazedaerialcable.itemfig.serialization.SerializationHelper;
+import io.github.hornster.itemfig.ItemFig;
+import io.github.hornster.itemfig.serialization.SerializationHelper;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static net.crazedaerialcable.itemfig.serialization.common.constants.Constants.ID_FIELD_NAME;
+import static io.github.hornster.itemfig.serialization.common.constants.Constants.ID_FIELD_NAME;
 
 
 public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSerializer<T>, JsonDeserializer<T> {

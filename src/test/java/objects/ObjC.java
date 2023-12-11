@@ -1,7 +1,7 @@
 package objects;
 
 import com.google.gson.*;
-import net.crazedaerialcable.itemfig.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.serialization.config.ConfigObj;
 
 import java.lang.reflect.Type;
 

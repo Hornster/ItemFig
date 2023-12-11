@@ -1,4 +1,4 @@
-package net.crazedaerialcable.itemfig;
+package io.github.hornster.itemfig;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;

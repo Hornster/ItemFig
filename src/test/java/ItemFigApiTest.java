@@ -1,16 +1,14 @@
 import adapters.ConfigObjAAdapter;
 import adapters.ConfigObjBAdapter;
 import adapters.ConfigObjCAdapter;
-import net.crazedaerialcable.itemfig.api.serialization.ItemFigApi;
-import net.crazedaerialcable.itemfig.serialization.SerializationManager;
-import net.crazedaerialcable.itemfig.serialization.config.ConfigObj;
-import net.crazedaerialcable.itemfig.serialization.config.ConfigObjAdapter;
+import io.github.hornster.itemfig.api.serialization.ItemFigApi;
+import io.github.hornster.itemfig.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
 import objects.ObjA;
 import objects.ObjB;
 import objects.ObjC;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -26,8 +24,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import static net.crazedaerialcable.itemfig.serialization.common.constants.Constants.EMPTY_CONFIG_READ_WARN;
-import static net.crazedaerialcable.itemfig.serialization.common.constants.Constants.EMPTY_CONFIG_SAVE_WARN;
+import static io.github.hornster.itemfig.serialization.common.constants.Constants.EMPTY_CONFIG_READ_WARN;
+import static io.github.hornster.itemfig.serialization.common.constants.Constants.EMPTY_CONFIG_SAVE_WARN;
 import static org.junit.jupiter.api.Assertions.fail;
 
 

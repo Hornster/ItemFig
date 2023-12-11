@@ -1,4 +1,4 @@
-package net.crazedaerialcable.itemfig.serialization.config;
+package io.github.hornster.itemfig.serialization.config;
 
 import com.google.gson.*;
 

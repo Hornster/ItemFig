@@ -1,4 +1,4 @@
-package net.crazedaerialcable.itemfig.api.serialization.config;
+package io.github.hornster.itemfig.api.serialization.config;
 
 import java.lang.reflect.Type;
 /**
@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
  * <br>
  * Use together with ConfigObjAdapter.
  * */
-public abstract class ConfigObj extends net.crazedaerialcable.itemfig.serialization.config.ConfigObj {
+public abstract class ConfigObj extends io.github.hornster.itemfig.serialization.config.ConfigObj {
 
     /**
      * @param myType needed for auto deserialization.

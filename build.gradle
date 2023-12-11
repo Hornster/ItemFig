@@ -2,6 +2,8 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
+    id 'java-library'
+    id 'signing'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
@@ -179,12 +181,12 @@ jar.finalizedBy('reobfJar')
 
 java {
     withSourcesJar()
-    //withJavadocJar()
+    withJavadocJar()
 }
 
 tasks.register('apiJar', Jar) {
     archiveClassifier.set('api')
-    include 'net/crazedaerialcable/itemfig/api/**/*'
+    include 'net/github/itemfig/api/**/*'
     from sourceSets.main.allSource
     from sourceSets.main.output
 }
@@ -214,18 +216,86 @@ tasks.named('processResources', ProcessResources).configure {
 //     dependsOn 'reobfJar'
 // }
 
+artifacts {
+    archives apiJar
+    archives sourcesJar
+}
+
 publishing {
+    tasks.publish.dependsOn 'build'
     publications {
-        register('mavenJava', MavenPublication) {
+
+        mavenJava(MavenPublication) {
+            artifactId project.archivesBaseName
             artifact jar
+            artifact sourcesJar
+            artifact apiJar
+//            pom {
+//                name = project.archivesBaseName
+//                description = 'Serialization lib for item configurations for minecraft forge.'
+//                url = 'https://github.com/Hornster/ItemFig'
+//
+//                licenses {
+//                    license {
+//                        name = 'The Apache License, Version 2.0'
+//                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id = 'crazedaerialcable'
+//                        name = 'CrazedAerialCable'
+//                        email = 'crazedaerialcable@gmail.com'
+//                    }
+//                }
+//                scm {
+//                    connection = 'scm:git:git://github.com/Hornster/ItemFig.git'
+//                    developerConnection = ''
+//                    url = 'https://github.com/Hornster/ItemFig'
+//                }
+//            }
         }
+
     }
+
     repositories {
         maven {
-            url "file://${project.projectDir}/mcmodsrepo"
+            name = "itemfig"
+
+            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"   //layout.buildDirectory.dir('repos/releases')
+            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"//layout.buildDirectory.dir('repos/snapshots')
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+            credentials {
+                username = System.getenv("MAVEN_PACKAGES_USERNAME")
+                password = System.getenv("MAVEN_PACKAGES_TOKEN_GIT")
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
         }
     }
+
+
 }
+signing {
+    sign publishing.publications.mavenJava
+}
+//publishing {
+//    publications {
+//        register('mavenJavaLocal', MavenPublication) {
+//            artifactId project.archivesBaseName
+//            artifact jar
+//            artifact sourcesJar
+//            artifact apiJar
+//        }
+//    }
+//    repositories {
+//        maven {
+//            url "file://${project.projectDir}/mcmodsrepo"
+//        }
+//    }
+//}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation

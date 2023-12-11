@@ -1,7 +1,6 @@
-package net.crazedaerialcable.itemfig.api.serialization.config;
+package io.github.hornster.itemfig.api.serialization.config;
 
-import net.crazedaerialcable.itemfig.api.serialization.ItemFigApi;
-import net.crazedaerialcable.itemfig.api.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.api.serialization.ItemFigApi;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -16,7 +15,7 @@ import java.util.List;
  *
  * @param <T> The type of the config object this adapter will be working with.
  * */
-public abstract class ConfigObjAdapter<T extends ConfigObj> extends net.crazedaerialcable.itemfig.serialization.config.ConfigObjAdapter<T> {
+public abstract class ConfigObjAdapter<T extends ConfigObj> extends io.github.hornster.itemfig.serialization.config.ConfigObjAdapter<T> {
     /**
      * Used to retrieve the config objects class fields.
      * <br><br>
