@@ -11,6 +11,15 @@ plugins {
 version = mod_version
 group = mod_group_id
 
+ext { // this are variables
+    pomGroupId = group
+    pomVersion = version
+    pomArtifactId = "itemfig"
+    pomArtifactName = "ItemFig"
+
+    jdkCompileVersion = 17
+}
+
 base {
     archivesName = mod_id
 }
@@ -178,7 +187,9 @@ jar {
 // Example configuration to allow publishing using the maven-publish plugin
 // This is the preferred method to reobfuscate your jar file
 jar.finalizedBy('reobfJar')
-
+task printSigning {
+    println(project.findProperty('signing'))
+}
 java {
     withSourcesJar()
     withJavadocJar()
@@ -230,37 +241,37 @@ publishing {
             artifact jar
             artifact sourcesJar
             artifact apiJar
-//            pom {
-//                name = project.archivesBaseName
-//                description = 'Serialization lib for item configurations for minecraft forge.'
-//                url = 'https://github.com/Hornster/ItemFig'
-//
-//                licenses {
-//                    license {
-//                        name = 'The Apache License, Version 2.0'
-//                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-//                    }
-//                }
-//                developers {
-//                    developer {
-//                        id = 'crazedaerialcable'
-//                        name = 'CrazedAerialCable'
-//                        email = 'crazedaerialcable@gmail.com'
-//                    }
-//                }
-//                scm {
-//                    connection = 'scm:git:git://github.com/Hornster/ItemFig.git'
-//                    developerConnection = ''
-//                    url = 'https://github.com/Hornster/ItemFig'
-//                }
-//            }
+            pom {
+                name = project.archivesBaseName
+                description = 'Serialization lib for item configurations for minecraft forge.'
+                url = 'https://github.com/Hornster/ItemFig'
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'crazedaerialcable'
+                        name = 'CrazedAerialCable'
+                        email = 'crazedaerialcable@gmail.com'
+                    }
+                }
+                scm {
+                    url = 'scm:git:https://github.com/Hornster/ItemFig'
+                    connection = 'scm:git:git://github.com/Hornster/ItemFig.git'
+                    developerConnection = 'scm:git:ssh://github.com/Hornster/ItemFig.git'
+                }
+            }
         }
 
     }
 
     repositories {
         maven {
-            name = "itemfig"
+            name = "OSSRH"
 
             def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"   //layout.buildDirectory.dir('repos/releases')
             def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"//layout.buildDirectory.dir('repos/snapshots')
@@ -279,8 +290,10 @@ publishing {
 
 }
 signing {
+    useGpgCmd()
     sign publishing.publications.mavenJava
 }
+
 //publishing {
 //    publications {
 //        register('mavenJavaLocal', MavenPublication) {
@@ -300,3 +313,5 @@ signing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
+//https://github.com/davidweber411/how-to-publish-to-maven-central-with-gradle
