@@ -23,7 +23,8 @@ public abstract class ConfigObj extends io.github.hornster.itemfig.serialization
     public ConfigObj(Type myType, String myID) {
         super(myType, myID);
     }
-    /**Checks if any fields were not assigned to during deserialization and
-     * assigns default values to them.*/
+    /**
+     * {@inheritDoc}
+     */
     public abstract void chkDefaultValues();
 }

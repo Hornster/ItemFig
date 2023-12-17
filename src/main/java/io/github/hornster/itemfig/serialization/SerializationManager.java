@@ -65,7 +65,10 @@ public class SerializationManager {
     public boolean _recreateConfig = false;
 
     /**
-     * Registers a data object for serialization.
+     * Registers a config object for reading and saving. The param type of the adapter
+     * has to be the same as the one of registered object.
+     * @param object Object to register.
+     * @param adapter Adapter for the registered object that will be used to serialize and deserialize (write and read from and to config file) object data.
      */
     public void registerObject(ConfigObj object, ConfigObjAdapter<?> adapter) {
         _registeredObjects.put(object.getConfigObjId(), object);
@@ -73,7 +76,9 @@ public class SerializationManager {
     }
 
     /**
-     * Registers multiple data objects for serialization.
+     * Registers multiple objects utilizing a list of pairs. The param type of the adapters
+     * have to be the same as the ones of registered objects'
+     * @param objects A list of config objects paired with their adapters to register. {@link #registerObject(ConfigObj, ConfigObjAdapter)} for details.
      */
     public void registerObjects(List<Pair<ConfigObj, ConfigObjAdapter<?>>> objects) {
         for (var obj : objects) {
@@ -82,17 +87,37 @@ public class SerializationManager {
             _registeredObjectsAdapters.put(configObj.getConfigObjType(), obj.getValue());
         }
     }
-
+    /**
+     * If logging of a serialization (saving) error is not enough, you can
+     * attach a handler here. Errors mean something went wrong and
+     * something probably failed to be saved.
+     * @param handler The string argument will contain the error message.*/
     public void registerSaveErrorHandler(Consumer<String> handler) {
         _configSaveErrHandler = handler;
     }
+    /**
+     * If logging of a serialization (saving) warning is not enough, you can
+     * attach a handler here. Warnings are reported when something probably unwanted
+     * happens, but does not cause errors or exceptions. An example would be a warning
+     * about an empty file saving (no registered objects).
+     * @param handler The string argument will contain the error message.*/
     public void registerSaveWarningHandler(Consumer<String> handler) {
         _configSaveWarnHandler = handler;
     }
-
+    /**
+     * If logging of a deserialization (loading) error is not enough, you can
+     * attach a handler here. Errors mean something went wrong and
+     * something probably failed to be loaded.
+     * @param handler The string argument will contain the error message.*/
     public void registerReadErrorHandler(Consumer<String> handler) {
         _configReadErrHandler = handler;
     }
+    /**
+     * If logging of a deserialization (load) warning is not enough, you can
+     * attach a handler here. Warnings are reported when something probably unwanted
+     * happens, but does not cause errors or exceptions. An example would be a warning
+     * about an empty file being read (no saved objects).
+     * @param handler The string argument will contain the error message.*/
     public void registerReadWarningHandler(Consumer<String> handler) {
         _configReadWarnHandler = handler;
     }
@@ -103,10 +128,16 @@ public class SerializationManager {
     public void setConfigFileName(String name) {
         _jsonFileName = name;
     }
+    /**
+     * Returns the name of the config file, with .json extension attached even if it was
+     * not provided earlier upon changing the config name.*/
     public String getConfigFileName(){
         chkIfExtensionProvided();
         return _jsonFileName;
     }
+    /**
+     * Returns the absolute path to the folder where the config will be saved, without
+     * the name of the config itself.*/
     public String getConfigPath(){
         chkIfExtensionProvided();
         return _jsonPath;
@@ -226,8 +257,8 @@ public class SerializationManager {
     }
 
     /**
-     * Read config from the config file. If recreateConfig flag has been set, the current config, if present,
-     * will be deleted and new one will be created in its place.
+     * Read config from the config file. If config is not found, it will be recreated using default values
+     * of registered objects. If read config lacks data, it will be added automatically.
      */
     public void readConfig() {
         chkIfExtensionProvided();

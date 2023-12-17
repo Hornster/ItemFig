@@ -4,6 +4,18 @@ import com.google.gson.*;
 
 import java.lang.reflect.Type;
 
+/**
+ * Represents a single object class that you wish to save and read config for. Extend this class and override
+ * the chkDefaultValues() method.
+ * <br>
+ * <br>
+ * chkDefaultValues() should, as name implies, check if current values stored in an instance of extending
+ * class are considered proper values. If not, it should assign or call for assignment of default values
+ * of them. It is called after deserialization (config read) and before serialization (config save).
+ * <br>
+ * <br>
+ * Use together with ConfigObjAdapter.
+ * */
 public abstract class ConfigObj {
     protected Type _myType;
     protected String _myID;

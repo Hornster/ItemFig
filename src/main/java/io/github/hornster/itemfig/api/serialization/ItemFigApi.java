@@ -35,14 +35,18 @@ public class ItemFigApi{
      * Force saving of the config no matter if any deserialization errors occurred.
      * DANGER OF LOSING DATA IF SET TO TRUE!
      * By default, false.
+     *
+     * @param shouldForceConfigSave New value for the config param.
      */
     public static void setForceConfigSave(boolean shouldForceConfigSave){
         _serializationManager._forceConfigSave = shouldForceConfigSave;
     }
     /**
-     * Update the config with default values and new items if any were added.
+     * Update the config with default values and new items if any were added upon game launch.
      * Will not work if deserialization errors occurred.
      * By default, true.
+     *
+     * @param shouldUpdateConfigSave New value for the config param.
      */
     public static void setUpdateConfigSave (boolean shouldUpdateConfigSave){
         _serializationManager._updateConfigSave = shouldUpdateConfigSave;
@@ -50,19 +54,26 @@ public class ItemFigApi{
     /**
      * Wipe current config clean and recreate new one from default values.
      * By default, false.
+     *
+     * @param shouldRecreateConfig New value for the config param.
      */
     public static void setRecreateConfig(boolean shouldRecreateConfig){
         _serializationManager._recreateConfig = shouldRecreateConfig;
     }
     /**
      * Registers a config object for reading and saving. The param type of the adapter
-     * has to be the same as the one of registered object.*/
+     * has to be the same as the one of registered object.
+     * @param object Object to register.
+     * @param adapter Adapter for the registered object that will be used to serialize and deserialize (write and read from and to config file) object data.
+     */
     public static void registerObject(ConfigObj object, ConfigObjAdapter<?> adapter) {
         _serializationManager.registerObject(object, adapter);
     }
     /**
      * Registers multiple objects utilizing a list of pairs. The param type of the adapters
-     * have to be the same as the ones of registered objects'.*/
+     * have to be the same as the ones of registered objects'
+     * @param objects A list of config objects paired with their adapters to register. {@link #registerObject(ConfigObj, ConfigObjAdapter)} for details.
+     */
     public static void registerObjects(List<Pair<ConfigObj, ConfigObjAdapter<?>>> objects){
         _serializationManager.registerObjects(objects);
     }
@@ -102,20 +113,27 @@ public class ItemFigApi{
     }
 
     /**
-     * Sets the name of the result json file. Extension is not needed.
+     * Sets the name of the result json file.
+     *
+     * @param name New name for the config file to be created. No need for extension,
+     *             it will be added automatically (.json).
      */
     public static void setConfigFileName(String name) {
         _serializationManager.setConfigFileName(name);
     }
     /**
      * Returns the name of the config file, with .json extension attached even if it was
-     * not provided earlier upon changing the config name.*/
+     * not provided earlier upon changing the config name.
+     *
+     * @return Name of the config file, with extension.*/
     public static String getConfigFileName(){
         return _serializationManager.getConfigFileName();
     }
     /**
      * Returns the absolute path to the folder where the config will be saved, without
-     * the name of the config itself.*/
+     * the name of the config itself.
+     *
+     * @return Absolute path to the folder where the config should be saved, without the name of the config file itself.*/
     public static String getConfigPath(){
         return _serializationManager.getConfigPath();
     }
@@ -127,8 +145,12 @@ public class ItemFigApi{
         _serializationManager.readConfig();
     }
     /**
-     * Returns the config item. Does NOT cause a read. readConfig() method should be called before using this one.
-     * @param itemId ID of the item that shall be retrieved.*/
+     * Get the config for provided ID. Should be called after saveConfig method.
+     * Returned object can be cast to whatever type it was upon being registered.
+     *
+     * @param itemId The ID unique of the config object to retrieve.*
+     * @return Object described by provided itemId or null if none present.
+     */
     public static ConfigObj getItemConfig(String itemId){
         return _serializationManager.getItemConfig(itemId);
     }
@@ -136,6 +158,7 @@ public class ItemFigApi{
      * Gets the config for provided ID. Should be called after saveConfig method.
      *
      * @param itemId ID of the registered item used to find the item.
+     * @param <T> The type which the returned config object shall be cast to. Has to inherit from {@see io.github.hornster.itemfig.api.serialization.config.ConfigObj}.
      * @return Automatically casts returned config object to provided type.
      */
     public static <T extends ConfigObj> T getItemConfigAutoCast(String itemId){
