@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * The main class of the mod where magic is done and dragons reside.
+ * The main class of the mod where magic is done and dragons reside. Your main interface of communication with the librarby.
  * <br><br>
  * Usual order of operations:
  * <br>
