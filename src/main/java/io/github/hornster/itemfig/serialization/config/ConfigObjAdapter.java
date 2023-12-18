@@ -2,6 +2,7 @@ package io.github.hornster.itemfig.serialization.config;
 
 import com.google.gson.*;
 import io.github.hornster.itemfig.ItemFig;
+import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
 import io.github.hornster.itemfig.serialization.SerializationHelper;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

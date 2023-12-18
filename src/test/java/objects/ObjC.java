@@ -1,7 +1,7 @@
 package objects;
 
 import com.google.gson.*;
-import io.github.hornster.itemfig.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
 
 import java.lang.reflect.Type;
 
@@ -41,15 +41,10 @@ public class ObjC extends ObjCC  {
         return thisType;
     }
 
-        @Override
+    @Override
     public ConfigObj DeserializeConfigObj(Gson gson, JsonElement element) {
         var deserializedObj = (ObjC)gson.fromJson(element,thisType);
         return deserializedObj;
-    }
-
-    @Override
-    public String SerializeConfigObj(Gson gson) {
-        return gson.toJson(this);
     }
 
     @Override

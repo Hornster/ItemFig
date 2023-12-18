@@ -2,7 +2,7 @@ import adapters.ConfigObjAAdapter;
 import adapters.ConfigObjBAdapter;
 import adapters.ConfigObjCAdapter;
 import io.github.hornster.itemfig.api.serialization.ItemFigApi;
-import io.github.hornster.itemfig.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
 import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
 import objects.ObjA;
 import objects.ObjB;

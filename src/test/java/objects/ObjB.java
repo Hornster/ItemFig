@@ -1,7 +1,7 @@
 package objects;
 
 
-import io.github.hornster.itemfig.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
 
 public class ObjB extends ConfigObj {
     public Float paramB1;

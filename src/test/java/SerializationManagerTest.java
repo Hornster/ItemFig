@@ -2,7 +2,7 @@ import objects.ObjA;
 import objects.ObjB;
 import objects.ObjC;
 import io.github.hornster.itemfig.serialization.SerializationManager;
-import io.github.hornster.itemfig.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
 import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;

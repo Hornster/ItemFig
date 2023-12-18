@@ -6,7 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.hornster.itemfig.ItemFig;
 import io.github.hornster.itemfig.serialization.common.constants.Constants;
-import io.github.hornster.itemfig.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
 import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
 import org.apache.commons.lang3.tuple.Pair;
 

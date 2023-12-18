@@ -2,7 +2,7 @@ package io.github.hornster.itemfig.api.serialization;
 
 import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
 import io.github.hornster.itemfig.serialization.SerializationManager;
-import io.github.hornster.itemfig.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
