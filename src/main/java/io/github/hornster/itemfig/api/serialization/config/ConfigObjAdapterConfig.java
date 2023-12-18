@@ -19,7 +19,7 @@ public abstract class ConfigObjAdapterConfig<T extends ConfigObj> {
     /**
      * Used to retrieve the objects true class type.
      * <br><br>
-     * Example: return getFields(ConfigObjClassHere.class);
+     * Example: return ConfigObjClassHere.class;
      * <br><br>
      * */
     public abstract Class getConfigObjClass();

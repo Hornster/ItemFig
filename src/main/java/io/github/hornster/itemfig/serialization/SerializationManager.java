@@ -81,7 +81,7 @@ public class SerializationManager {
     /**
      * Registers multiple objects utilizing a list of pairs. The param type of the adapters
      * have to be the same as the ones of registered objects'
-     * @param objects A list of config objects paired with their adapters to register. {@link #registerObject(ConfigObj, ConfigObjAdapter)} for details.
+     * @param objects A list of config objects paired with their adapters to register. {@link #registerObject(ConfigObj, ConfigObjAdapterConfig)} for details.
      */
     public void registerObjects(List<Pair<ConfigObj, ConfigObjAdapterConfig<?>>> objects) {
         for (var obj : objects) {
