@@ -3,6 +3,7 @@ package io.github.hornster.itemfig.serialization.config;
 import com.google.gson.*;
 import io.github.hornster.itemfig.ItemFig;
 import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.api.serialization.config.ConfigObjAdapterConfig;
 import io.github.hornster.itemfig.serialization.SerializationHelper;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -15,7 +16,13 @@ import java.util.List;
 import static io.github.hornster.itemfig.serialization.common.constants.Constants.ID_FIELD_NAME;
 
 
-public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSerializer<T>, JsonDeserializer<T> {
+public class ConfigObjAdapter<T extends ConfigObj> implements JsonSerializer<T>, JsonDeserializer<T> {
+    private ConfigObjAdapterConfig<T> adapterConfig;
+
+    public ConfigObjAdapter(ConfigObjAdapterConfig<T> adapterConfig) {
+        this.adapterConfig = adapterConfig;
+    }
+
     @Override
     public JsonElement serialize(T src, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject jsonObject = new JsonObject();
@@ -40,12 +47,18 @@ public abstract class ConfigObjAdapter<T extends ConfigObj> implements JsonSeria
         }
         return jsonObject;
     }
-    protected abstract List<Field> getFields();
+    protected List<Field> getFields(){
+        var trueConfigObjClass = adapterConfig.getConfigObjClass();
+        return getFields(trueConfigObjClass);
+    }
     /**
      * Used to retrieve the constructor of config object which the adapter takes care of.
      * The constructor needs to accept a single String type for the ID, as in, item ID.
      * Example: return ConfigObjClassHere.class.getConstructor(String.class);*/
-    protected abstract Constructor<T> getConstructorForDeserialization() throws NoSuchMethodException;
+    protected Constructor<T> getConstructorForDeserialization() throws NoSuchMethodException
+    {
+        return adapterConfig.getConstructorForDeserialization();
+    }
     protected List<Field> getFields(Class checkedClass){
         if(checkedClass == null){
             return Collections.emptyList();

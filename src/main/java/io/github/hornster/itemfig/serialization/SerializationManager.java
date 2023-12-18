@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.hornster.itemfig.ItemFig;
+import io.github.hornster.itemfig.api.serialization.config.ConfigObjAdapterConfig;
 import io.github.hornster.itemfig.serialization.common.constants.Constants;
 import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
 import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
@@ -70,9 +71,11 @@ public class SerializationManager {
      * @param object Object to register.
      * @param adapter Adapter for the registered object that will be used to serialize and deserialize (write and read from and to config file) object data.
      */
-    public void registerObject(ConfigObj object, ConfigObjAdapter<?> adapter) {
+    public void registerObject(ConfigObj object, ConfigObjAdapterConfig<?> adapter) {
         _registeredObjects.put(object.getConfigObjId(), object);
-        _registeredObjectsAdapters.put(object.getConfigObjType(), adapter);
+
+        var objAdapter = new ConfigObjAdapter<>(adapter);
+        _registeredObjectsAdapters.put(object.getConfigObjType(), objAdapter);
     }
 
     /**
@@ -80,11 +83,13 @@ public class SerializationManager {
      * have to be the same as the ones of registered objects'
      * @param objects A list of config objects paired with their adapters to register. {@link #registerObject(ConfigObj, ConfigObjAdapter)} for details.
      */
-    public void registerObjects(List<Pair<ConfigObj, ConfigObjAdapter<?>>> objects) {
+    public void registerObjects(List<Pair<ConfigObj, ConfigObjAdapterConfig<?>>> objects) {
         for (var obj : objects) {
             var configObj = obj.getKey();
             _registeredObjects.put(configObj.getConfigObjId(), configObj);
-            _registeredObjectsAdapters.put(configObj.getConfigObjType(), obj.getValue());
+
+            var objAdapter = new ConfigObjAdapter<>(obj.getValue());
+            _registeredObjectsAdapters.put(configObj.getConfigObjType(), objAdapter);
         }
     }
     /**
@@ -143,11 +148,6 @@ public class SerializationManager {
         return _jsonPath;
     }
 
-    private void reportError(Consumer<String> handler, String msg) {
-        if (handler != null) {
-            handler.accept(msg);
-        }
-    }
 
     /**
      * Reports a critical error during deserialization.

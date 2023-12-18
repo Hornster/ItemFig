@@ -1,5 +1,6 @@
 package io.github.hornster.itemfig.api.serialization;
 
+import io.github.hornster.itemfig.api.serialization.config.ConfigObjAdapterConfig;
 import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
 import io.github.hornster.itemfig.serialization.SerializationManager;
 import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
@@ -64,17 +65,17 @@ public class ItemFigApi{
      * Registers a config object for reading and saving. The param type of the adapter
      * has to be the same as the one of registered object.
      * @param object Object to register.
-     * @param adapter Adapter for the registered object that will be used to serialize and deserialize (write and read from and to config file) object data.
+     * @param adapterConfig Adapter for the registered object that will be used to serialize and deserialize (write and read from and to config file) object data.
      */
-    public static void registerObject(ConfigObj object, ConfigObjAdapter<?> adapter) {
-        _serializationManager.registerObject(object, adapter);
+    public static void registerObject(ConfigObj object, ConfigObjAdapterConfig<?> adapterConfig) {
+        _serializationManager.registerObject(object, adapterConfig);
     }
     /**
      * Registers multiple objects utilizing a list of pairs. The param type of the adapters
      * have to be the same as the ones of registered objects'
-     * @param objects A list of config objects paired with their adapters to register. {@link #registerObject(ConfigObj, ConfigObjAdapter)} for details.
+     * @param objects A list of config objects paired with their adapters to register. {@link #registerObject(ConfigObj, ConfigObjAdapterConfig)} for details.
      */
-    public static void registerObjects(List<Pair<ConfigObj, ConfigObjAdapter<?>>> objects){
+    public static void registerObjects(List<Pair<ConfigObj, ConfigObjAdapterConfig<?>>> objects){
         _serializationManager.registerObjects(objects);
     }
     /**

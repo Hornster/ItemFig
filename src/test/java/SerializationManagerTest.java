@@ -1,3 +1,4 @@
+import io.github.hornster.itemfig.api.serialization.config.ConfigObjAdapterConfig;
 import objects.ObjA;
 import objects.ObjB;
 import objects.ObjC;
@@ -7,9 +8,9 @@ import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.*;
-import adapters.ConfigObjAAdapter;
-import adapters.ConfigObjBAdapter;
-import adapters.ConfigObjCAdapter;
+import adapters.ConfigObjAAdapterConfig;
+import adapters.ConfigObjBAdapterConfig;
+import adapters.ConfigObjCAdapterConfig;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,16 +45,16 @@ public class SerializationManagerTest {
     void tearDown() {
         _serializationManager = null;
     }
-    private static List<Pair<ConfigObj, ConfigObjAdapter<?>>> createObjListOK(){
+    private static List<Pair<ConfigObj, ConfigObjAdapterConfig<?>>> createObjListOK(){
         var newObjectA = new ObjA(OBJ_A_NAME);
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
 
-        var newAdapterObjA = new ConfigObjAAdapter();
-        var newAdapterObjB = new ConfigObjBAdapter();
-        var newAdapterObjC = new ConfigObjCAdapter();
+        var newAdapterObjA = new ConfigObjAAdapterConfig();
+        var newAdapterObjB = new ConfigObjBAdapterConfig();
+        var newAdapterObjC = new ConfigObjCAdapterConfig();
 
-        var list = new LinkedList<Pair<ConfigObj, ConfigObjAdapter<?>>>();
+        var list = new LinkedList<Pair<ConfigObj, ConfigObjAdapterConfig<?>>>();
         list.add(new MutablePair<>(newObjectA, newAdapterObjA));
         list.add(new MutablePair<>(newObjectB, newAdapterObjB));
         list.add(new MutablePair<>(newObjectC, newAdapterObjC));
@@ -120,9 +121,9 @@ public class SerializationManagerTest {
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
 
-        var newAdapterObjA = new ConfigObjAAdapter();
-        var newAdapterObjB = new ConfigObjBAdapter();
-        var newAdapterObjC = new ConfigObjCAdapter();
+        var newAdapterObjA = new ConfigObjAAdapterConfig();
+        var newAdapterObjB = new ConfigObjBAdapterConfig();
+        var newAdapterObjC = new ConfigObjCAdapterConfig();
 
         try{
             _serializationManager.registerObject(newObjectA, newAdapterObjA);
@@ -273,7 +274,7 @@ public class SerializationManagerTest {
         var testObjC = TestCases.OBJC_TEST_FULL_CUSTOM_DATA;
         prepareConfig(TestCases.CONFIG_FULL_FIELDS_SINGLE_OBJ, configPath);
 
-        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
+        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapterConfig());
 
         _serializationManager.readConfig();
 
@@ -291,7 +292,7 @@ public class SerializationManagerTest {
         var testObjC2 = TestCases.OBJC_TEST_FULL_CUSTOM_DATA2;
         prepareConfig(TestCases.CONFIG_SAME_OBJC_TYPES, configPath);
 
-        var objCAdapter = new ConfigObjCAdapter();
+        var objCAdapter = new ConfigObjCAdapterConfig();
 
         _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), objCAdapter);
         _serializationManager.registerObject(new ObjC(testObjC2.getConfigObjId()), objCAdapter);
@@ -324,9 +325,9 @@ public class SerializationManagerTest {
         var testObjC = TestCases.OBJC_TEST_FULL_CUSTOM_DATA;
         prepareConfig(TestCases.CONFIG_FULL_ALL_CHANGED, configPath);
 
-        _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
-        _serializationManager.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapter());
-        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
+        _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapterConfig());
+        _serializationManager.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapterConfig());
+        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapterConfig());
 
         var idsList = getTestObjIds(testObjA, testObjB, testObjC);
 
@@ -360,7 +361,7 @@ public class SerializationManagerTest {
         testObjA.chkDefaultValues();
 
         prepareConfig(TestCases.CONFIG_LACKS_FIELDS_SINGLE_OBJ_PRE_SAVE, configPath);
-        _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
+        _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapterConfig());
 
         _serializationManager.readConfig();
 
@@ -379,9 +380,9 @@ public class SerializationManagerTest {
         var testObjC = TestCases.OBJC_TEST_PARTIAL_CUSTOM_DATA;
         prepareConfig(TestCases.CONFIG_LACKS_FIELDS_FULL_MULTIPLE_OBJ_PRE_SAVE, configPath);
 
-        _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
-        _serializationManager.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapter());
-        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
+        _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapterConfig());
+        _serializationManager.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapterConfig());
+        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapterConfig());
 
         var idsList = getTestObjIds(testObjA, testObjB, testObjC);
 
@@ -421,9 +422,9 @@ public class SerializationManagerTest {
 
         prepareConfig(TestCases.CONFIG_FULL_FIELDS_LACKS_ONE_OBJ_PRE_SAVE, configPath);
 
-        _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
-        _serializationManager.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapter());
-        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
+        _serializationManager.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapterConfig());
+        _serializationManager.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapterConfig());
+        _serializationManager.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapterConfig());
 
         var idsList = getTestObjIds(testObjA, testObjB, testObjC);
 
@@ -450,9 +451,9 @@ public class SerializationManagerTest {
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
 
-        var newAdapterObjA = new ConfigObjAAdapter();
-        var newAdapterObjB = new ConfigObjBAdapter();
-        var newAdapterObjC = new ConfigObjCAdapter();
+        var newAdapterObjA = new ConfigObjAAdapterConfig();
+        var newAdapterObjB = new ConfigObjBAdapterConfig();
+        var newAdapterObjC = new ConfigObjCAdapterConfig();
 
         try{
             _serializationManager.registerObject(newObjectA, newAdapterObjA);
@@ -476,9 +477,9 @@ public class SerializationManagerTest {
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
 
-        var newAdapterObjA = new ConfigObjAAdapter();
-        var newAdapterObjB = new ConfigObjBAdapter();
-        var newAdapterObjC = new ConfigObjCAdapter();
+        var newAdapterObjA = new ConfigObjAAdapterConfig();
+        var newAdapterObjB = new ConfigObjBAdapterConfig();
+        var newAdapterObjC = new ConfigObjCAdapterConfig();
 
         try{
             _serializationManager.registerObject(newObjectA, newAdapterObjA);

@@ -1,9 +1,10 @@
-import adapters.ConfigObjAAdapter;
-import adapters.ConfigObjBAdapter;
-import adapters.ConfigObjCAdapter;
+import adapters.ConfigObjAAdapterConfig;
+import adapters.ConfigObjBAdapterConfig;
+import adapters.ConfigObjCAdapterConfig;
 import io.github.hornster.itemfig.api.serialization.ItemFigApi;
 import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
-import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
+import io.github.hornster.itemfig.api.serialization.config.ConfigObjAdapterConfig;
+
 import objects.ObjA;
 import objects.ObjB;
 import objects.ObjC;
@@ -38,16 +39,16 @@ public class ItemFigApiTest {
     void setUp() {
         ItemFigApi.resetManager();
     }
-    private static List<Pair<ConfigObj, ConfigObjAdapter<?>>> createObjListOK(){
+    private static List<Pair<ConfigObj, ConfigObjAdapterConfig<?>>> createObjListOK(){
         var newObjectA = new ObjA(OBJ_A_NAME);
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
 
-        var newAdapterObjA = new ConfigObjAAdapter();
-        var newAdapterObjB = new ConfigObjBAdapter();
-        var newAdapterObjC = new ConfigObjCAdapter();
+        var newAdapterObjA = new ConfigObjAAdapterConfig();
+        var newAdapterObjB = new ConfigObjBAdapterConfig();
+        var newAdapterObjC = new ConfigObjCAdapterConfig();
 
-        var list = new LinkedList<Pair<ConfigObj, ConfigObjAdapter<?>>>();
+        var list = new LinkedList<Pair<ConfigObj, ConfigObjAdapterConfig<?>>>();
         list.add(new MutablePair<>(newObjectA, newAdapterObjA));
         list.add(new MutablePair<>(newObjectB, newAdapterObjB));
         list.add(new MutablePair<>(newObjectC, newAdapterObjC));
@@ -114,9 +115,9 @@ public class ItemFigApiTest {
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
 
-        var newAdapterObjA = new ConfigObjAAdapter();
-        var newAdapterObjB = new ConfigObjBAdapter();
-        var newAdapterObjC = new ConfigObjCAdapter();
+        var newAdapterObjA = new ConfigObjAAdapterConfig();
+        var newAdapterObjB = new ConfigObjBAdapterConfig();
+        var newAdapterObjC = new ConfigObjCAdapterConfig();
 
         try{
             ItemFigApi.registerObject(newObjectA, newAdapterObjA);
@@ -267,7 +268,7 @@ public class ItemFigApiTest {
         var testObjC = TestCases.OBJC_TEST_FULL_CUSTOM_DATA;
         prepareConfig(TestCases.CONFIG_FULL_FIELDS_SINGLE_OBJ, configPath);
 
-        ItemFigApi.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
+        ItemFigApi.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapterConfig());
 
         ItemFigApi.readConfig();
 
@@ -285,7 +286,7 @@ public class ItemFigApiTest {
         var testObjC2 = TestCases.OBJC_TEST_FULL_CUSTOM_DATA2;
         prepareConfig(TestCases.CONFIG_SAME_OBJC_TYPES, configPath);
 
-        var objCAdapter = new ConfigObjCAdapter();
+        var objCAdapter = new ConfigObjCAdapterConfig();
 
         ItemFigApi.registerObject(new ObjC(testObjC.getConfigObjId()), objCAdapter);
         ItemFigApi.registerObject(new ObjC(testObjC2.getConfigObjId()), objCAdapter);
@@ -318,9 +319,9 @@ public class ItemFigApiTest {
         var testObjC = TestCases.OBJC_TEST_FULL_CUSTOM_DATA;
         prepareConfig(TestCases.CONFIG_FULL_ALL_CHANGED, configPath);
 
-        ItemFigApi.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
-        ItemFigApi.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapter());
-        ItemFigApi.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
+        ItemFigApi.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapterConfig());
+        ItemFigApi.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapterConfig());
+        ItemFigApi.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapterConfig());
 
         var idsList = getTestObjIds(testObjA, testObjB, testObjC);
 
@@ -354,7 +355,7 @@ public class ItemFigApiTest {
         testObjA.chkDefaultValues();
 
         prepareConfig(TestCases.CONFIG_LACKS_FIELDS_SINGLE_OBJ_PRE_SAVE, configPath);
-        ItemFigApi.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
+        ItemFigApi.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapterConfig());
 
         ItemFigApi.readConfig();
 
@@ -373,9 +374,9 @@ public class ItemFigApiTest {
         var testObjC = TestCases.OBJC_TEST_PARTIAL_CUSTOM_DATA;
         prepareConfig(TestCases.CONFIG_LACKS_FIELDS_FULL_MULTIPLE_OBJ_PRE_SAVE, configPath);
 
-        ItemFigApi.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
-        ItemFigApi.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapter());
-        ItemFigApi.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
+        ItemFigApi.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapterConfig());
+        ItemFigApi.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapterConfig());
+        ItemFigApi.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapterConfig());
 
         var idsList = getTestObjIds(testObjA, testObjB, testObjC);
 
@@ -415,9 +416,9 @@ public class ItemFigApiTest {
 
         prepareConfig(TestCases.CONFIG_FULL_FIELDS_LACKS_ONE_OBJ_PRE_SAVE, configPath);
 
-        ItemFigApi.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapter());
-        ItemFigApi.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapter());
-        ItemFigApi.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapter());
+        ItemFigApi.registerObject(new ObjA(testObjA.getConfigObjId()), new ConfigObjAAdapterConfig());
+        ItemFigApi.registerObject(new ObjB(testObjB.getConfigObjId()), new ConfigObjBAdapterConfig());
+        ItemFigApi.registerObject(new ObjC(testObjC.getConfigObjId()), new ConfigObjCAdapterConfig());
 
         var idsList = getTestObjIds(testObjA, testObjB, testObjC);
 
@@ -444,9 +445,9 @@ public class ItemFigApiTest {
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
 
-        var newAdapterObjA = new ConfigObjAAdapter();
-        var newAdapterObjB = new ConfigObjBAdapter();
-        var newAdapterObjC = new ConfigObjCAdapter();
+        var newAdapterObjA = new ConfigObjAAdapterConfig();
+        var newAdapterObjB = new ConfigObjBAdapterConfig();
+        var newAdapterObjC = new ConfigObjCAdapterConfig();
 
         try{
             ItemFigApi.registerObject(newObjectA, newAdapterObjA);
@@ -470,9 +471,9 @@ public class ItemFigApiTest {
         var newObjectB = new ObjB(OBJ_B_NAME);
         var newObjectC = new ObjC(OBJ_C_NAME);
 
-        var newAdapterObjA = new ConfigObjAAdapter();
-        var newAdapterObjB = new ConfigObjBAdapter();
-        var newAdapterObjC = new ConfigObjCAdapter();
+        var newAdapterObjA = new ConfigObjAAdapterConfig();
+        var newAdapterObjB = new ConfigObjBAdapterConfig();
+        var newAdapterObjC = new ConfigObjCAdapterConfig();
 
         try{
             ItemFigApi.registerObject(newObjectA, newAdapterObjA);

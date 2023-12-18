@@ -10,24 +10,24 @@ import java.util.List;
  * A serialization/deserialization adapter for your configurable object. Needs to be provided along {@link ConfigObj}
  * to SerializationManager through {@link ItemFigApi}.
  * <br><br>
- * You need to provide implementations for {@link #getFields()} and {@link #getConstructorForDeserialization()}
+ * You need to provide implementations for {@link #getConfigObjClass()} and {@link #getConstructorForDeserialization()}
  * which are, pretty much, necessary boilerplate code that needs a bit of adjusting.
  *
  * @param <T> The type of the config object this adapter will be working with.
  * */
-public abstract class ConfigObjAdapter<T extends ConfigObj> extends io.github.hornster.itemfig.serialization.config.ConfigObjAdapter<T> {
+public abstract class ConfigObjAdapterConfig<T extends ConfigObj> {
     /**
-     * Used to retrieve the config objects class fields.
+     * Used to retrieve the objects true class type.
      * <br><br>
      * Example: return getFields(ConfigObjClassHere.class);
      * <br><br>
      * */
-    protected abstract List<Field> getFields();
+    public abstract Class getConfigObjClass();
 
     /**
      * Used to retrieve the constructor of config object which the adapter takes care of.
      * The constructor needs to accept a single String type for the ID, as in, item ID.
      * <br><br>
      * Example: return ConfigObjClassHere.class.getConstructor(String.class);*/
-    protected abstract Constructor<T> getConstructorForDeserialization() throws NoSuchMethodException;
+    public abstract Constructor<T> getConstructorForDeserialization() throws NoSuchMethodException;
 }
