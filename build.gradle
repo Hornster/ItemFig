@@ -138,7 +138,9 @@ repositories {
 
 dependencies {
     testImplementation  'org.junit.jupiter:junit-jupiter:5.8.1'
-    implementation "com.google.code.gson:gson:${gson_ver}"
+    // This is POM type dependency:
+    //implementation "com.google.code.gson:gson:${gson_ver}"
+    api("com.google.code.gson:gson:${gson_ver}")
 
     // Specify the version of Minecraft to use.
     // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
