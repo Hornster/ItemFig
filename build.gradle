@@ -134,13 +134,10 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    mavenCentral()
 }
 
 dependencies {
-    testImplementation  'org.junit.jupiter:junit-jupiter:5.8.1'
-    // This is POM type dependency:
-    //implementation "com.google.code.gson:gson:${gson_ver}"
-    api("com.google.code.gson:gson:${gson_ver}")
 
     // Specify the version of Minecraft to use.
     // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
@@ -148,6 +145,11 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+
+    testImplementation  'org.junit.jupiter:junit-jupiter:5.8.1'
+    // This is POM type dependency:
+    implementation "com.google.code.gson:gson:${gson_ver}"
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
@@ -264,7 +266,30 @@ publishing {
                     connection = 'scm:git:git://github.com/Hornster/ItemFig.git'
                     developerConnection = 'scm:git:ssh://github.com/Hornster/ItemFig.git'
                 }
+                withXml{
+                    def dependenciesNode = asNode().appendNode('dependencies')
+
+                    //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
+                    configurations.implementation.allDependencies.find{
+                        dep-> !dep.name.contains('forge')
+                    }.each {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+                    }
+                }
             }
+
+
+
+//            def dependenciesNode = asNode().appendNode('dependencies')
+//            configurations.compile.allDependencies.each {
+//                def dependencyNode = dependenciesNode.appendNode('dependency')
+//                dependencyNode.appendNode('groupId', it.group)
+//                dependencyNode.appendNode('artifactId', it.name)
+//                dependencyNode.appendNode('version', it.version)
+//            }
         }
 
     }
@@ -289,6 +314,7 @@ publishing {
 
 
 }
+
 signing {
     useGpgCmd()
     sign publishing.publications.mavenJava

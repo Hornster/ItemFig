@@ -1,8 +1,12 @@
 package io.github.hornster.itemfig.serialization;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class SerializationHelper {
     public static void addProperty(Field field, JsonObject jsonObject, Object src) throws IllegalAccessException, Exception{
@@ -99,5 +103,16 @@ public class SerializationHelper {
             field.setAccessible(false);
         }
 
+    }
+    /**Method for compat with GSON 2.8.9 since MC hates 2.10.1 apparently.*/
+    public static Map<String, JsonElement> getAsMap(JsonObject jsonObject){
+        var map = new LinkedHashMap<String, JsonElement>();
+
+        var entries = jsonObject.entrySet();
+        for(var entry : entries){
+            map.put(entry.getKey(), entry.getValue());
+        }
+
+        return map;
     }
 }

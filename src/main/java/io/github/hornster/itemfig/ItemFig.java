@@ -1,6 +1,8 @@
 package io.github.hornster.itemfig;
 
 import com.mojang.logging.LogUtils;
+import io.github.hornster.itemfig.api.serialization.ItemFigApi;
+import io.github.hornster.itemfig.serialization.SerializationManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -35,6 +37,7 @@ public class ItemFig
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         //ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)

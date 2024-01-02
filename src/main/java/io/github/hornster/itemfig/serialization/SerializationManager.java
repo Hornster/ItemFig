@@ -205,7 +205,7 @@ public class SerializationManager {
             //the config file with it.
         }
 
-        var jsonRegisteredObjectsSet = jsonRegisteredObjects.asMap();
+        var jsonRegisteredObjectsSet = SerializationHelper.getAsMap(jsonRegisteredObjects);//jsonRegisteredObjects.asMap();
 
         if(jsonRegisteredObjectsSet.size() == 0){
             reportDeserializationWarning(Constants.EMPTY_CONFIG_READ_WARN);
@@ -353,7 +353,8 @@ public class SerializationManager {
 
         var rootJsonObj = new JsonObject();
         var configMapElement = gson.toJsonTree(new HashMap<String, ConfigObj>());
-        var configMapObj = configMapElement.getAsJsonObject().asMap();
+        var configMapJsonObj = configMapElement.getAsJsonObject();
+        var configMapObj = SerializationHelper.getAsMap(configMapJsonObj);//configMapElement.getAsJsonObject().asMap();
 
         _registeredObjects.forEach((key, configObj) -> {
             var serializedObj = gson.toJsonTree(configObj);
