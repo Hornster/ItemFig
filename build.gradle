@@ -8,7 +8,7 @@ plugins {
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
-version = minecraft_version + "-" + mod_version
+version = mod_version
 group = mod_group_id
 
 ext { // this are variables
