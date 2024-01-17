@@ -12,5 +12,5 @@
 - For now everything is put in one config file.
 
 ## Docs:
-- Integration with IDE
-- How to use
+- <a href="https://hornster.github.io/ItemFig/Docs/usage/integration.md">Integration with IDE</a>
+- <a href="https://hornster.github.io/ItemFig/Docs/usage/usage.md">How to use</a>
