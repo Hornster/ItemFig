@@ -1,4 +1,4 @@
-package net.crazedaerialcable.itemfig;
+package io.github.hornster.itemfig;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;

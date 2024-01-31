@@ -1,4 +1,4 @@
-package net.crazedaerialcable.itemfig.mixin;
+package io.github.hornster.itemfig.mixin;
 
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;

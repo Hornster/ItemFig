@@ -1,9 +1,8 @@
 {
 	"required": true,
-	"package": "net.crazedaerialcable.itemfig.mixin",
+	"package": "io.github.hornster.itemfig.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"ExampleMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

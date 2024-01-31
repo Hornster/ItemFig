@@ -3,9 +3,9 @@
 	"id": "itemfig",
 	"version": "${version}",
 	"name": "ItemFig",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Simple mod that allows for config of item parameters.",
 	"authors": [
-		"Me!"
+		"CrazedAerialCable"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -16,10 +16,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"net.crazedaerialcable.itemfig.ItemFig"
+			"io.github.hornster.itemfig.ItemFig"
+		],
+		"client": [
+			"io.github.hornster.itemfig.ItemFigClient"
 		],
 		"fabric-datagen": [
-			"net.crazedaerialcable.itemfig.ItemFigDataGenerator"
+			"io.github.hornster.itemfig.ItemFigDataGenerator"
 		]
 	},
 	"mixins": [
@@ -27,7 +30,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.6",
-		"minecraft": "~1.20.2",
+		"minecraft": "~1.20.1",
 		"java": ">=17",
 		"fabric-api": "*"
 	},
