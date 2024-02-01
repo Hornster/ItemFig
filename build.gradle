@@ -1,10 +1,12 @@
 plugins {
 	id 'fabric-loom' version '1.5-SNAPSHOT'
 	id 'maven-publish'
+	id 'signing'
 }
 
 version = project.mod_version
 group = project.maven_group
+mod_name = project.mod_name
 
 base {
 	archivesName = project.archives_base_name
@@ -30,6 +32,7 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	testImplementation  'org.junit.jupiter:junit-jupiter:5.8.1'
 	
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
@@ -39,37 +42,121 @@ dependencies {
 
 processResources {
 	inputs.property "version", project.version
+	inputs.property "minecraft_version", project.minecraft_version
+	inputs.property "fabric_version", project.fabric_version
+	inputs.property "mod_id", project.mod_id
+	inputs.property "mod_name", project.name
+	inputs.property "mod_license", project.mod_license
+	inputs.property "mod_authors", project.mod_authors
+	inputs.property "mod_description", project.mod_description
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": project.version,
+				"mod_id": project.mod_id,
+				"mod_name": project.mod_name,
+				"mod_description": project.mod_description,
+				"mod_authors": project.mod_authors,
+				"mod_license": project.mod_license
 	}
 }
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.release = 17
 }
+jar {
+	manifest {
+		attributes([
+				"Specification-Title"     : project.name,
+				"Specification-Vendor"    : project.mod_authors,
+				"Specification-Version"   : "1", // We are version 1 of ourselves
+				"Implementation-Title"    : project.name,
+				"Implementation-Version"  : minecraft_version + "-" +project.jar.archiveVersion,
+				"Implementation-Vendor"   : project.mod_authors,
+				"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+		])
+	}
+	from("LICENSE") {
+		rename { "${it}_${project.base.archivesName.get()}"}
+	}
+	exclude('**/*.psd')
+	exclude('**/*.bbmodel')
+}
 
+
+task printSigning {
+	println(project.findProperty('signing'))
+}
 java {
 	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 	// if it is present.
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
+	withJavadocJar()
 
 	sourceCompatibility = JavaVersion.VERSION_17
 	targetCompatibility = JavaVersion.VERSION_17
 }
 
-jar {
-	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
-	}
+tasks.register('apiJar', Jar) {
+	archiveClassifier.set('api')
+	include 'io/github/hornster/itemfig/api/**/*'
+	from sourceSets.main.allSource
+	from sourceSets.main.output
+}
+artifacts {
+	archives apiJar
+	archives sourcesJar
+	archives javadocJar
 }
 
 // configure the maven publication
 publishing {
+	tasks.publish.dependsOn 'build'
 	publications {
 		mavenJava(MavenPublication) {
-			from components.java
+			//from components.java
+			artifactId project.archivesBaseName
+			artifact jar
+			artifact sourcesJar
+			artifact javadocJar
+			artifact apiJar
+			pom {
+				name = project.archivesBaseName
+				description = 'Serialization lib for item configurations for minecraft fabric.'
+				url = 'https://github.com/Hornster/ItemFig'
+
+				licenses {
+					license {
+						name = 'All rights reserved'
+						url = ''
+					}
+				}
+				developers {
+					developer {
+						id = 'crazedaerialcable'
+						name = 'CrazedAerialCable'
+						email = 'crazedaerialcable@gmail.com'
+					}
+				}
+				scm {
+					url = 'scm:git:https://github.com/Hornster/ItemFig'
+					connection = 'scm:git:git://github.com/Hornster/ItemFig.git'
+					developerConnection = 'scm:git:ssh://github.com/Hornster/ItemFig.git'
+				}
+				withXml{
+					def dependenciesNode = asNode().appendNode('dependencies')
+
+					//Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
+					configurations.implementation.allDependencies.find{
+						dep-> !dep.name.contains('fabric')
+					}.each {
+						def dependencyNode = dependenciesNode.appendNode('dependency')
+						dependencyNode.appendNode('groupId', it.group)
+						dependencyNode.appendNode('artifactId', it.name)
+						dependencyNode.appendNode('version', it.version)
+					}
+				}
+			}
 		}
 	}
 
@@ -79,5 +166,29 @@ publishing {
 		// Notice: This block does NOT have the same function as the block in the top level.
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
+		maven {
+			name = "OSSRH"
+
+			def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"   //layout.buildDirectory.dir('repos/releases')
+			def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"//layout.buildDirectory.dir('repos/snapshots')
+			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+			credentials {
+				username = System.getenv("MAVEN_PACKAGES_USERNAME")
+				password = System.getenv("MAVEN_PACKAGES_TOKEN_GIT")
+			}
+			authentication {
+				basic(BasicAuthentication)
+			}
+		}
 	}
+}
+
+signing {
+	useGpgCmd()
+	sign publishing.publications.mavenJava
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }

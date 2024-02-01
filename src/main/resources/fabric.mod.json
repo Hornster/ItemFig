@@ -1,18 +1,18 @@
 {
 	"schemaVersion": 1,
-	"id": "itemfig",
+	"id": "${mod_id}",
 	"version": "${version}",
-	"name": "ItemFig",
-	"description": "Simple mod that allows for config of item parameters.",
+	"name": "${mod_name}",
+	"description": "${mod_description}",
 	"authors": [
-		"CrazedAerialCable"
+		"${mod_authors}"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-	"license": "CC0-1.0",
-	"icon": "assets/itemfig/icon.png",
+	"license": "${mod_license}",
+	"icon": "assets/itemfig/itemfigicon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
