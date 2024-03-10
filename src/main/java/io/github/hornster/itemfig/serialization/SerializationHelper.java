@@ -8,7 +8,15 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static io.github.hornster.itemfig.serialization.common.constants.Constants.JSON_EXTENSION;
+
 public class SerializationHelper {
+    public static String chkIfExtensionProvided(String fileName) {
+        if (!fileName.contains(JSON_EXTENSION)) {
+            fileName = fileName + JSON_EXTENSION;
+        }
+        return fileName;
+    }
     public static void addProperty(Field field, JsonObject jsonObject, Object src) throws IllegalAccessException, Exception{
         var fieldType = field.getType();
         var wasAccessible = field.canAccess(src);

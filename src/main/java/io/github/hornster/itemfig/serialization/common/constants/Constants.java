@@ -5,4 +5,6 @@ public class Constants {
     public static final String EMPTY_CONFIG_READ_WARN = "Read config is empty! You ought to run the deserialization with the config recreation flag set to true.";
 
     public static final String ID_FIELD_NAME = "_myID";
+    public static final String JSON_EXTENSION = ".json";
+    public static final String DEFAULT_JSON_FILE_NAME = "itemfig-mod-config";
 }

@@ -18,8 +18,8 @@ public class ObjectsStore {
      * The inner collections key is preferably the ID used in mod for given item, but can be something else as
      * long as it is unique, obviously.
      */
-    private final Map<String, Map<String, ConfigObj>> _registeredObjects = new LinkedHashMap<>();
-    private final Map<Type, ConfigObjAdapter<?>> _registeredObjectsAdapters = new HashMap<>();
+    private final Map<String, FileObject> _registeredFiles = new LinkedHashMap<>();
+    private final Map<Type, ConfigObjAdapter<?>> _registeredFilesAdapters = new HashMap<>();
 
     /**
      * Registers a config object for reading and saving. The param type of the adapter
@@ -29,15 +29,15 @@ public class ObjectsStore {
      * @param adapter Adapter for the registered object that will be used to serialize and deserialize (write and read from and to config file) object data.
      */
     public void registerObject(String fileName, ConfigObj object, ConfigObjAdapterConfig<?> adapter) {
-        if(!_registeredObjects.containsKey(fileName)){
-            _registeredObjects.put(fileName, new LinkedHashMap<>());
+        if(!_registeredFiles.containsKey(fileName)){
+            _registeredFiles.put(fileName, new FileObject(fileName));
         }
 
-        var registeredObjectsForFile = _registeredObjects.get(fileName);
-        registeredObjectsForFile.put(object.getConfigObjId(), object);
+        var registeredObjectsForFile = _registeredFiles.get(fileName);
+        registeredObjectsForFile.registerObject(object);
 
         var objAdapter = new ConfigObjAdapter<>(adapter);
-        _registeredObjectsAdapters.put(object.getConfigObjType(), objAdapter);
+        _registeredFilesAdapters.put(object.getConfigObjType(), objAdapter);
     }
 
     /**
@@ -52,10 +52,13 @@ public class ObjectsStore {
             registerObject(fileName, configObj, configAdapter);
         }
     }
-    public Map<String, Map<String, ConfigObj>> GetConfigObjects(){
-        return _registeredObjects;
+    public Map<String, FileObject> GetConfigFileObjects(){
+        return _registeredFiles;
+    }
+    public FileObject GetConfigFileObject(String fileName){
+        return _registeredFiles.get(fileName);
     }
     public Map<Type, ConfigObjAdapter<?>> GetAdapters(){
-        return _registeredObjectsAdapters;
+        return _registeredFilesAdapters;
     }
 }
