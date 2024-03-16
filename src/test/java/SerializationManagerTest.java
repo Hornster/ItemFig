@@ -4,7 +4,6 @@ import objects.ObjB;
 import objects.ObjC;
 import io.github.hornster.itemfig.serialization.SerializationManager;
 import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
-import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.*;
@@ -23,8 +22,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import static io.github.hornster.itemfig.serialization.common.constants.Constants.EMPTY_CONFIG_READ_WARN;
-import static io.github.hornster.itemfig.serialization.common.constants.Constants.EMPTY_CONFIG_SAVE_WARN;
+import static io.github.hornster.itemfig.serialization.common.constants.Constants.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
@@ -175,22 +173,48 @@ public class SerializationManagerTest {
             fail("Should not throw any exceptions upon trying to return properly registered config objects! Additional info: " + ex.getMessage());
         }
     }
-
     @Test
     @Order(1)
-    void recreateEmptyConfig(){
+    void attemptNullObjectRegistration(){
         _serializationManager._recreateConfig = true;
         var wasReported = new AtomicBoolean(false);
 
         Consumer<String> reporter = (String warnMsg) ->{
             System.out.println(warnMsg);
             wasReported.set(true);
-            if(!warnMsg.equals(EMPTY_CONFIG_SAVE_WARN)){
+            if(!warnMsg.equals(CONFIG_OBJ_CANNOT_BE_NULL_EX)){
+                fail("Incorrect warning msg returned about registering a null config object!");
+            }
+        };
+        _serializationManager.registerObjectRegistrationErrorHandler(reporter);
+
+        try{
+            _serializationManager.registerObject(null, null);
+        }
+        catch(Exception ex){
+            fail("Registering a null object should not throw an exception. Instead, it should call" +
+                    "a handler if one was provided. Additional info: \n\n" + ex.getMessage());
+        }
+
+        if(!wasReported.get()){
+            fail("Error about registering a null config object was not reported!");
+        }
+        _serializationManager._recreateConfig = false;
+    }
+    @Test
+    @Order(1)
+    void attemptLoadDefaultFileWithNoObjectsRegistered(){
+        _serializationManager._recreateConfig = true;
+        var wasReported = new AtomicBoolean(false);
+
+        Consumer<String> reporter = (String warnMsg) ->{
+            System.out.println(warnMsg);
+            wasReported.set(true);
+            if(!warnMsg.equals(NO_CONFIG_FILES_WARN)){
                 fail("Incorrect warning msg returned about saved empty config!");
             }
         };
-
-        _serializationManager.registerSaveWarningHandler(reporter);
+        _serializationManager.registerReadWarningHandler(reporter);
 
         try{
             _serializationManager.readConfig();
@@ -208,13 +232,13 @@ public class SerializationManagerTest {
     @Test
     @Order(2)
     void readEmptyConfig(){
-        recreateEmptyConfig();
+        attemptLoadDefaultFileWithNoObjectsRegistered();
         var wasReported = new AtomicBoolean(false);
 
         Consumer<String> reporter = (String warnMsg) ->{
             System.out.println(warnMsg);
             wasReported.set(true);
-            if(!warnMsg.equals(EMPTY_CONFIG_READ_WARN)){
+            if(!warnMsg.equals(NO_CONFIG_FILES_WARN)){
                 fail("Incorrect warning msg returned about saved empty config!");
             }
         };

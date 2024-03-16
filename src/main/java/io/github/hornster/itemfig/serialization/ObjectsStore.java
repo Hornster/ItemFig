@@ -3,6 +3,7 @@ package io.github.hornster.itemfig.serialization;
 import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
 import io.github.hornster.itemfig.api.serialization.config.ConfigObjAdapterConfig;
 import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
+import io.github.hornster.itemfig.serialization.exceptions.ItemFigException;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Type;
@@ -10,6 +11,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static io.github.hornster.itemfig.serialization.common.constants.Constants.CONFIG_OBJ_CANNOT_BE_NULL_EX;
 
 public class ObjectsStore {
     /**
@@ -28,7 +31,11 @@ public class ObjectsStore {
      * @param object Object to register.
      * @param adapter Adapter for the registered object that will be used to serialize and deserialize (write and read from and to config file) object data.
      */
-    public void registerObject(String fileName, ConfigObj object, ConfigObjAdapterConfig<?> adapter) {
+    public void registerObject(String fileName, ConfigObj object, ConfigObjAdapterConfig<?> adapter) throws ItemFigException {
+        if(object == null){
+            throw new ItemFigException(CONFIG_OBJ_CANNOT_BE_NULL_EX);
+        }
+
         if(!_registeredFiles.containsKey(fileName)){
             _registeredFiles.put(fileName, new FileObject(fileName));
         }
@@ -36,8 +43,10 @@ public class ObjectsStore {
         var registeredObjectsForFile = _registeredFiles.get(fileName);
         registeredObjectsForFile.registerObject(object);
 
-        var objAdapter = new ConfigObjAdapter<>(adapter);
-        _registeredFilesAdapters.put(object.getConfigObjType(), objAdapter);
+        if(adapter != null){
+            var objAdapter = new ConfigObjAdapter<>(adapter);
+            _registeredFilesAdapters.put(object.getConfigObjType(), objAdapter);
+        }
     }
 
     /**
@@ -45,7 +54,7 @@ public class ObjectsStore {
      * have to be the same as the ones of registered objects'
      * @param objects A list of config objects paired with their adapters to register. {@link #registerObject(String, ConfigObj, ConfigObjAdapterConfig)} for details.
      */
-    public void registerObjects(String fileName, List<Pair<ConfigObj, ConfigObjAdapterConfig<?>>> objects) {
+    public void registerObjects(String fileName, List<Pair<ConfigObj, ConfigObjAdapterConfig<?>>> objects) throws ItemFigException {
         for (var obj : objects) {
             var configObj = obj.getKey();
             var configAdapter = obj.getValue();

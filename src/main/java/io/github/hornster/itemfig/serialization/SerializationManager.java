@@ -7,7 +7,9 @@ import io.github.hornster.itemfig.ItemFig;
 import io.github.hornster.itemfig.api.serialization.config.ConfigObjAdapterConfig;
 import io.github.hornster.itemfig.serialization.common.constants.Constants;
 import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
+import io.github.hornster.itemfig.serialization.exceptions.ItemFigException;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -15,10 +17,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static io.github.hornster.itemfig.serialization.common.constants.Constants.DEFAULT_JSON_FILE_NAME;
+import static io.github.hornster.itemfig.ItemFig.LOGGER;
+import static io.github.hornster.itemfig.serialization.common.constants.Constants.*;
 
 public class SerializationManager {
     private ObjectsStore _objectsStore = new ObjectsStore();
@@ -34,7 +38,7 @@ public class SerializationManager {
     /**
      * By default, set as @link{Constants.DEFAULT_JSON_FILE_NAME}. Can be changed if the user wishes so.*/
     private String _defaultJsonFileName = DEFAULT_JSON_FILE_NAME;
-
+    private Consumer<String> _configRegistrationErrHandler;
     private Consumer<String> _configSaveErrHandler;
     private Consumer<String> _configSaveWarnHandler;
     private Consumer<String> _configReadErrHandler;
@@ -65,12 +69,18 @@ public class SerializationManager {
 
     /**
      * Registers a config object for reading and saving. The param type of the adapter
-     * has to be the same as the one of registered object.
+     * has to be the same as the one of registered object. If the adapter type is already present,
+     * no need to provide it.
      * @param object Object to register.
      * @param adapter Adapter for the registered object that will be used to serialize and deserialize (write and read from and to config file) object data.
      */
-    public void registerObject(ConfigObj object, ConfigObjAdapterConfig<?> adapter) {
-        _objectsStore.registerObject(_defaultJsonFileName, object, adapter);
+    public void registerObject(@NotNull ConfigObj object, ConfigObjAdapterConfig<?> adapter) {
+        try{
+            _objectsStore.registerObject(_defaultJsonFileName, object, adapter);
+        }
+        catch(ItemFigException ex){
+            reportObjRegistrationError(ex.getMessage());
+        }
     }
 
     /**
@@ -79,7 +89,18 @@ public class SerializationManager {
      * @param objects A list of config objects paired with their adapters to register. {@link #registerObject(ConfigObj, ConfigObjAdapterConfig)} for details.
      */
     public void registerObjects(List<Pair<ConfigObj, ConfigObjAdapterConfig<?>>> objects) {
-        _objectsStore.registerObjects(_defaultJsonFileName, objects);
+        try{
+            _objectsStore.registerObjects(_defaultJsonFileName, objects);
+        }
+        catch(ItemFigException ex){
+            reportObjRegistrationError(ex.getMessage());
+        }
+    }
+    /**
+     * If default logging of object registration error is not enough, you can attach a handler here.
+     * */
+    public void registerObjectRegistrationErrorHandler(Consumer<String> handler){
+        _configRegistrationErrHandler = handler;
     }
     /**
      * If logging of a serialization (saving) error is not enough, you can
@@ -137,7 +158,10 @@ public class SerializationManager {
         return _jsonPath;
     }
 
-
+    private void reportObjRegistrationError(String msg){
+        LOGGER.error(msg);
+        _configRegistrationErrHandler.accept(CONFIG_OBJ_CANNOT_BE_NULL_EX);
+    }
     /**
      * Reports a critical error during deserialization.
      */
@@ -146,7 +170,7 @@ public class SerializationManager {
         if(_configReadErrHandler != null){
             _configReadErrHandler.accept(msg);
         }
-        ItemFig.LOGGER.error(msg);
+        LOGGER.error(msg);
     }
 
     /**
@@ -158,89 +182,38 @@ public class SerializationManager {
         if(_configReadWarnHandler != null){
             _configReadWarnHandler.accept(msg);
         }
-        ItemFig.LOGGER.warn(msg);
+        LOGGER.warn(msg);
     }
 
     private void reportSerializationWarning(String msg){
         if(_configSaveWarnHandler != null){
             _configSaveWarnHandler.accept(msg);
         }
-        ItemFig.LOGGER.warn(msg);
+        LOGGER.warn(msg);
     }
     private void reportSerializationError(String msg){
         if(_configSaveErrHandler != null){
             _configSaveErrHandler.accept(msg);
         }
-        ItemFig.LOGGER.error(msg);
+        LOGGER.error(msg);
     }
 
-//    private void chkIfExtensionProvided() {
-//        if (!_defaultJsonFileName.contains(_jsonExtension)) {
-//            _defaultJsonFileName = _defaultJsonFileName + _jsonExtension;
-//        }
-//    }
 
-    private void deserializeFile(Gson gson, String jsonString) {
-//        var jsonConfigElement = gson.fromJson(jsonString, JsonElement.class);
-//        if (!jsonConfigElement.isJsonObject()) {
-//            reportDeserializationError("Base json element is not a json object!");
-//        }
-//        var jsonConfigObj = jsonConfigElement.getAsJsonObject();
-//        var jsonRegisteredObjects = jsonConfigObj.getAsJsonObject(_registeredObjectsFieldName);
-//
-//        if (jsonRegisteredObjects == null) {
-//            reportDeserializationWarning(Constants.EMPTY_CONFIG_READ_WARN);
-//            return; //Nothing to do here, there is no config in the file. We will read default data and recreate
-//            //the config file with it.
-//        }
-//
-//        var jsonRegisteredObjectsSet = SerializationHelper.getAsMap(jsonRegisteredObjects);//jsonRegisteredObjects.asMap();
-//
-//        if(jsonRegisteredObjectsSet.size() == 0){
-//            reportDeserializationWarning(Constants.EMPTY_CONFIG_READ_WARN);
-//            return; //Nothing to do here, there is no config in the file. We will read default data and recreate
-//            //the config file with it.
-//        }
-//
-//        var keys = jsonRegisteredObjectsSet.keySet();
-//
-//        for (var key : keys) {
-//            var jsonElement = jsonRegisteredObjectsSet.get(key);
-//            if (!jsonElement.isJsonObject()) {
-//                reportDeserializationWarning("Element with key " + key + " is not a valid json object! Skipping.");
-//                continue;
-//            }
-//
-//            if (!_registeredObjects.containsKey(key)) {
-//                reportDeserializationWarning("Element with key " + key + " does not have a registered data object! Skipping.");
-//                continue;
-//            }
-//            var registeredObject = _registeredObjects.get(key);
-//            var deserializedConfigObj = registeredObject.DeserializeConfigObj(gson, jsonElement);
-//            _registeredObjects.replace(key, deserializedConfigObj);
-//        }
-    }
-
-//    private void chkDefaultValues() {
-//        var registeredObjectsCollection = _registeredObjects.values();
-//        for (var registeredObj : registeredObjectsCollection) {
-//            registeredObj.chkDefaultValues();
-//        }
-//    }
 
     /**
      * Recreates the config file using provided defaults.
      */
-    private void recreateConfig(Gson gson) {
+    private void recreateConfig() {
         var configFiles = _objectsStore.GetConfigFileObjects().values();
 
         for(var configFile : configFiles){
             configFile.chkDefaultValues();
+
             var path = Paths.get(getConfigPath()+getConfigFileName());
             try {
                 Files.delete(path);
             } catch (NoSuchFileException ex) {
-                //reportSerializationWarning("Config file not found. No need to delete.");
+                reportSerializationWarning("Config file not found. No need to delete.");
             } catch (IOException ex) {
                 reportSerializationError(ex.getMessage());
             }
@@ -248,7 +221,13 @@ public class SerializationManager {
             saveConfig();
         }
     }
-
+    /**
+     * Checks if any files have been registered at all. If not, raises a warning.*/
+    private void chkIfConfigsRegistered(Collection<FileObject> fileObjects){
+        if(fileObjects.size() == 0){
+            reportDeserializationWarning(NO_CONFIG_FILES_WARN);
+        }
+    }
     /**
      * Read config from the config file. If config is not found, it will be recreated using default values
      * of registered objects. If read config lacks data, it will be added automatically.
@@ -257,22 +236,24 @@ public class SerializationManager {
         _jsonDeserializationError = false;
         var gsonObj = getGson();
 
-        String configStr = "";
         var configFiles = _objectsStore.GetConfigFileObjects().values();
+
+        chkIfConfigsRegistered(configFiles);
 
         for(var configFile : configFiles){
             configFile.FileName = SerializationHelper.chkIfExtensionProvided(configFile.FileName);
             configFile.chkDefaultValues();
 
             if (_recreateConfig) {
-                recreateConfig(gsonObj);
+                recreateConfig();
                 return;
             }
 
             try {
                 var filePath = getConfigPath() + getConfigFileName();
-                configStr = readFile(filePath);
-                deserializeFile(gsonObj, configStr);
+                var configStr = readFile(filePath);
+                configFile.deserializeFile(gsonObj, configStr, this::reportDeserializationError, this::reportDeserializationWarning);
+                //deserializeFile(gsonObj, configFile, configStr);
             } catch (IOException ex) {
                 if (_configReadErrHandler != null) {
                     _configReadErrHandler.accept(ex.getMessage());
@@ -371,4 +352,61 @@ public class SerializationManager {
         }
 
     }
+    //    private void chkIfExtensionProvided() {
+//        if (!_defaultJsonFileName.contains(_jsonExtension)) {
+//            _defaultJsonFileName = _defaultJsonFileName + _jsonExtension;
+//        }
+//    }
+
+    private void deserializeFile(Gson gson, FileObject configFile, String jsonString) {
+        //configFile.deserializeFile(gson, jsonString);
+//        var jsonConfigElement = gson.fromJson(jsonString, JsonElement.class);
+//        if (!jsonConfigElement.isJsonObject()) {
+//            reportDeserializationError("Base json element is not a json object!");
+//        }
+//        var jsonConfigObj = jsonConfigElement.getAsJsonObject();
+//        var jsonRegisteredObjects = jsonConfigObj.getAsJsonObject(_registeredObjectsFieldName);
+//
+//        if (jsonRegisteredObjects == null) {
+//            reportDeserializationWarning(Constants.EMPTY_CONFIG_READ_WARN);
+//            return; //Nothing to do here, there is no config in the file. We will read default data and recreate
+//            //the config file with it.
+//        }
+//
+//        var jsonRegisteredObjectsSet = SerializationHelper.getAsMap(jsonRegisteredObjects);//jsonRegisteredObjects.asMap();
+//
+//        if(jsonRegisteredObjectsSet.size() == 0){
+//            reportDeserializationWarning(Constants.EMPTY_CONFIG_READ_WARN);
+//            return; //Nothing to do here, there is no config in the file. We will read default data and recreate
+//            //the config file with it.
+//        }
+//
+//        var keys = jsonRegisteredObjectsSet.keySet();
+//
+//        for (var key : keys) {
+//            var jsonElement = jsonRegisteredObjectsSet.get(key);
+//            if (!jsonElement.isJsonObject()) {
+//                reportDeserializationWarning("Element with key " + key + " is not a valid json object! Skipping.");
+//                continue;
+//            }
+//
+//            if (!_registeredObjects.containsKey(key)) {
+//                reportDeserializationWarning("Element with key " + key + " does not have a registered data object! Skipping.");
+//                continue;
+//            }
+//            var registeredObject = _registeredObjects.get(key);
+//            var deserializedConfigObj = registeredObject.DeserializeConfigObj(gson, jsonElement);
+//            _registeredObjects.replace(key, deserializedConfigObj);
+//        }
+    }
+
+//    private void chkDefaultValues() {
+//        var registeredObjectsCollection = _registeredObjects.values();
+//        for (var registeredObj : registeredObjectsCollection) {
+//            registeredObj.chkDefaultValues();
+//        }
+//    }
 }
+
+//TODO: Check how the process, step by step, and make sure that the file names are properly used
+//TODO: and that the methods are being called like before, just including multiple file objects.

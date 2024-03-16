@@ -5,6 +5,7 @@ import io.github.hornster.itemfig.serialization.config.ConfigObjAdapter;
 import io.github.hornster.itemfig.serialization.SerializationManager;
 import io.github.hornster.itemfig.api.serialization.config.ConfigObj;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -63,11 +64,12 @@ public class ItemFigApi{
     }
     /**
      * Registers a config object for reading and saving. The param type of the adapter
-     * has to be the same as the one of registered object.
+     * has to be the same as the one of registered object. If the adapter type is already present,
+     * no need to provide it.
      * @param object Object to register.
      * @param adapterConfig Adapter for the registered object that will be used to serialize and deserialize (write and read from and to config file) object data.
      */
-    public static void registerObject(ConfigObj object, ConfigObjAdapterConfig<?> adapterConfig) {
+    public static void registerObject(@NotNull ConfigObj object, ConfigObjAdapterConfig<?> adapterConfig) {
         _serializationManager.registerObject(object, adapterConfig);
     }
     /**
@@ -77,6 +79,12 @@ public class ItemFigApi{
      */
     public static void registerObjects(List<Pair<ConfigObj, ConfigObjAdapterConfig<?>>> objects){
         _serializationManager.registerObjects(objects);
+    }
+    /**
+     * If default logging of object registration error is not enough, you can attach a handler here.
+     * */
+    public static void registerObjRegistrationErrorHandler(Consumer<String> handler){
+        _serializationManager.registerObjectRegistrationErrorHandler(handler);
     }
     /**
      * If logging of a serialization (saving) error is not enough, you can

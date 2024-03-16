@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import static io.github.hornster.itemfig.serialization.common.constants.Constants.EMPTY_CONFIG_READ_WARN;
-import static io.github.hornster.itemfig.serialization.common.constants.Constants.EMPTY_CONFIG_SAVE_WARN;
+import static io.github.hornster.itemfig.serialization.common.constants.Constants.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
@@ -179,12 +178,12 @@ public class ItemFigApiTest {
         Consumer<String> reporter = (String warnMsg) ->{
             System.out.println(warnMsg);
             wasReported.set(true);
-            if(!warnMsg.equals(EMPTY_CONFIG_SAVE_WARN)){
+            if(!warnMsg.equals(NO_CONFIG_FILES_WARN)){
                 fail("Incorrect warning msg returned about saved empty config!");
             }
         };
 
-        ItemFigApi.registerSaveWarningHandler(reporter);
+        ItemFigApi.registerReadWarningHandler(reporter);
 
         try{
             ItemFigApi.readConfig();
@@ -208,7 +207,7 @@ public class ItemFigApiTest {
         Consumer<String> reporter = (String warnMsg) ->{
             System.out.println(warnMsg);
             wasReported.set(true);
-            if(!warnMsg.equals(EMPTY_CONFIG_READ_WARN)){
+            if(!warnMsg.equals(NO_CONFIG_FILES_WARN)){
                 fail("Incorrect warning msg returned about saved empty config!");
             }
         };
